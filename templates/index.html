@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Pages SSO</title>
+</head>
+<body>
+    <h1>Welcome to GitHub Pages SSO</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    {% if 'email' not in session %}
+        <a href="{{ url_for('login') }}">Login</a>
+    {% else %}
+        <a href="{{ url_for('logout') }}">Logout</a>
+    {% endif %}
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('public_page') }}">Public Page</a></li>
+            <li><a href="{{ url_for('private_page') }}">Private Page</a></li>
+        </ul>
+    </nav>
+</body>
+</html>

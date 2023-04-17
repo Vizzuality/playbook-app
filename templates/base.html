@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your App Title</title>
+    <!-- You can add any other meta tags, stylesheets, or scripts here -->
+</head>
+<body>
+    <nav>
+        <!-- You can add your navigation menu items here -->
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('public_page') }}">Public Page</a>
+        <!-- Add any other menu items -->
+    </nav>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- You can add any footer content or scripts here -->
+</body>
+</html>
