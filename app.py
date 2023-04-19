@@ -2,7 +2,8 @@ import os
 import subprocess
 import git
 import requests
-from flask import Flask, render_template, redirect, url_for, session, flash, request, jsonify  # Add 'request' here
+import re
+from flask import Flask, render_template, redirect, url_for, session, flash, request, jsonify, send_from_directory
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from google.auth.transport import requests as google_requests
@@ -10,6 +11,7 @@ from markdown_it import MarkdownIt
 from mdit_py_plugins.tasklists import tasklists_plugin
 from dotenv import load_dotenv
 from datetime import datetime
+from urllib.parse import urljoin
 
 load_dotenv()
 if os.getenv('OAUTHLIB_INSECURE_TRANSPORT'):
@@ -25,6 +27,22 @@ local_repo_path = os.getenv('LOCAL_REPO_PATH')
 
 markdowner = MarkdownIt().use(tasklists_plugin)
 os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
+
+@app.route('/view-md/<path:md_path>')
+def view_md(md_path):
+    full_path = os.path.join(local_repo_path, md_path)
+    if not os.path.isfile(full_path) or not full_path.endswith('.md'):
+        return "File not found", 404
+
+    md_content = fetch_markdown_content(full_path)
+    html_content = markdowner.render(md_content)
+    return render_template('public_page.html', content=html_content)
+
+
+@app.route('/repo/<path:path>')
+def serve_repo_files(path):
+    return send_from_directory(local_repo_path, path)
+
 # Authentication
 @app.route('/login')
 def login():
@@ -92,25 +110,38 @@ def logout():
 def index():
     return render_template('index.html')
 
+@app.route('/public-page')
+def public_page():
+    md_content = fetch_markdown_content(os.path.join(local_repo_path, 'public_index.md'))
+    html_content = markdowner.render(md_content)
+    return render_template('public_index.html', content=html_content)
 
 @app.route('/private-page')
 def private_page():
     if 'email' not in session:
         flash('You need to be logged in to access this page.', 'error')
         return redirect(url_for('login'))
-
-    file_path = 'index.md'
-    md_content = fetch_markdown_from_github(file_path)
+    md_content = fetch_markdown_content(os.path.join(local_repo_path, 'private_index.md'))
     html_content = markdowner.render(md_content)
-    return render_template('private_page.html', content=html_content)
+    return render_template('private_index.html', content=html_content)
 
+# @app.route('/private-page')
+# def private_page():
+#     if 'email' not in session:
+#         flash('You need to be logged in to access this page.', 'error')
+#         return redirect(url_for('login'))
 
-@app.route('/public-page')
-def public_page():
-    file_path = 'index.md'
-    md_content = fetch_markdown_from_github(file_path)
-    html_content = markdowner.render(md_content)
-    return render_template('public_page.html', content=html_content)
+#     file_path = 'index.md'
+#     md_content = fetch_markdown_from_github(file_path)
+#     html_content = markdowner.render(md_content)
+#     return render_template('private_page.html', content=html_content)
+
+# @app.route('/public-page')
+# def public_page():
+#     file_path = 'index.md'
+#     md_content = fetch_markdown_from_github(file_path)
+#     html_content = markdowner.render(md_content)
+#     return render_template('public_page.html', content=html_content)
 
 @app.route('/update-repo', methods=['post'])
 def update_repo():
@@ -126,6 +157,35 @@ def update_repo():
         return jsonify({'status': 'success', 'message': 'Repository updated'}), 200
     else:
         return jsonify({'status': 'skipped', 'message': 'No update needed'}), 200
+
+def build_menus(local_repo_path):
+    public_menu = []
+    private_menu = []
+
+    for root, dirs, files in os.walk(local_repo_path):
+        for file in files:
+            if file.endswith(".md"):
+                # Use the relative path to the file for better organization
+                rel_path = os.path.relpath(os.path.join(root, file), local_repo_path)
+                private_menu.append(rel_path)  # Add all pages to the private_menu
+                
+                if not file.startswith("private"):
+                    public_menu.append(rel_path)  # Add only public pages to the public_menu
+
+    return public_menu, private_menu
+
+def save_menus_to_files(public_menu, private_menu, local_repo_path):
+    public_index_file = os.path.join(local_repo_path, "public_index.md")
+    private_index_file = os.path.join(local_repo_path, "private_index.md")
+
+    with open(public_index_file, "w") as public_file:
+        for item in public_menu:
+            public_file.write(f"- [{item}]({item})\n")
+
+    with open(private_index_file, "w") as private_file:
+        for item in private_menu:
+            private_file.write(f"- [{item}]({item})\n")
+
 
 def create_log_directory(log_dir):
     if not os.path.exists(log_dir):
@@ -159,12 +219,27 @@ def pull_changes(local_repo_path):
     run_command(f"{git_ssh_command} git status", local_repo_path, log_dir)
     run_command(f"{git_ssh_command} git remote show origin", local_repo_path, log_dir)
 
+    public_menu, private_menu = build_menus(local_repo_path)
+    save_menus_to_files(public_menu, private_menu, local_repo_path)
 
-def fetch_markdown_from_github(file_path):
-    headers = {'Accept': 'application/vnd.github.VERSION.raw'}
-    response = requests.get(f'{github_repo_url}/{file_path}', headers=headers)
-    response.raise_for_status()
-    return response.text
+def fetch_markdown_content(file_path):
+    with open(file_path, 'r') as file:
+        content = file.read()
+
+    # Find image paths and prepend /static/ to the path
+    content = re.sub(r'\!\[(.*?)\]\((.*?)\)', r'![\1](/static/\2)', content)
+
+    # Prepend /view-md/ to all links pointing to .md files
+    content = re.sub(r'\[(.*?)\]\((.*?\.md)\)', lambda m: f'[{m.group(1)}]({urljoin("/view-md/", m.group(2))})', content)
+
+    return content
+
+
+# def fetch_markdown_from_github(file_path):
+#     headers = {'Accept': 'application/vnd.github.VERSION.raw'}
+#     response = requests.get(f'{github_repo_url}/{file_path}', headers=headers)
+#     response.raise_for_status()
+#     return response.text
 
 if __name__ == '__main__':
     app.run()
