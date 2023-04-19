@@ -28,6 +28,12 @@ local_repo_path = os.getenv('LOCAL_REPO_PATH')
 markdowner = MarkdownIt().use(tasklists_plugin)
 os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
 
+# Routes
+
+@app.route('/images/<path:subpath>')
+def serve_image(subpath):
+    return send_from_directory(local_repo_path, subpath)
+
 @app.route('/view-md/<path:md_path>')
 def view_md(md_path):
     full_path = os.path.join(local_repo_path, md_path)
@@ -125,24 +131,6 @@ def private_page():
     html_content = markdowner.render(md_content)
     return render_template('private_index.html', content=html_content)
 
-# @app.route('/private-page')
-# def private_page():
-#     if 'email' not in session:
-#         flash('You need to be logged in to access this page.', 'error')
-#         return redirect(url_for('login'))
-
-#     file_path = 'index.md'
-#     md_content = fetch_markdown_from_github(file_path)
-#     html_content = markdowner.render(md_content)
-#     return render_template('private_page.html', content=html_content)
-
-# @app.route('/public-page')
-# def public_page():
-#     file_path = 'index.md'
-#     md_content = fetch_markdown_from_github(file_path)
-#     html_content = markdowner.render(md_content)
-#     return render_template('public_page.html', content=html_content)
-
 @app.route('/update-repo', methods=['post'])
 def update_repo():
     payload = request.get_json()
@@ -158,19 +146,27 @@ def update_repo():
     else:
         return jsonify({'status': 'skipped', 'message': 'No update needed'}), 200
 
+# Public functions
+
 def build_menus(local_repo_path):
-    public_menu = []
-    private_menu = []
+    public_menu = {}
+    private_menu = {}
 
     for root, dirs, files in os.walk(local_repo_path):
         for file in files:
             if file.endswith(".md"):
-                # Use the relative path to the file for better organization
                 rel_path = os.path.relpath(os.path.join(root, file), local_repo_path)
-                private_menu.append(rel_path)  # Add all pages to the private_menu
+                rel_dir = os.path.dirname(rel_path)
+
+                if rel_dir not in private_menu:
+                    private_menu[rel_dir] = []
+
+                private_menu[rel_dir].append(rel_path)  # Add all pages to the private_menu
                 
                 if not file.startswith("private"):
-                    public_menu.append(rel_path)  # Add only public pages to the public_menu
+                    if rel_dir not in public_menu:
+                        public_menu[rel_dir] = []
+                    public_menu[rel_dir].append(rel_path)  # Add only public pages to the public_menu
 
     return public_menu, private_menu
 
@@ -179,12 +175,18 @@ def save_menus_to_files(public_menu, private_menu, local_repo_path):
     private_index_file = os.path.join(local_repo_path, "private_index.md")
 
     with open(public_index_file, "w") as public_file:
-        for item in public_menu:
-            public_file.write(f"- [{item}]({item})\n")
+        for parent_dir, items in public_menu.items():
+            public_file.write(f"## {parent_dir}\n")
+            for item in items:
+                public_file.write(f"- [{item}]({item})\n")
+            public_file.write("\n")
 
     with open(private_index_file, "w") as private_file:
-        for item in private_menu:
-            private_file.write(f"- [{item}]({item})\n")
+        for parent_dir, items in private_menu.items():
+            private_file.write(f"## {parent_dir}\n")
+            for item in items:
+                private_file.write(f"- [{item}]({item})\n")
+            private_file.write("\n")
 
 
 def create_log_directory(log_dir):
@@ -226,20 +228,21 @@ def fetch_markdown_content(file_path):
     with open(file_path, 'r') as file:
         content = file.read()
 
-    # Find image paths and prepend /static/ to the path
-    content = re.sub(r'\!\[(.*?)\]\((.*?)\)', r'![\1](/static/\2)', content)
+    # Get the real folder path
+    real_folder_path = get_real_folder_path(file_path)
+    # Find image paths and prepend the /images/ route and the real folder path to the path
+    content = re.sub(r'\!\[(.*?)\]\((.*?)\)', fr'![\1](/images/{real_folder_path}/\2)', content)
 
-    # Prepend /view-md/ to all links pointing to .md files
-    content = re.sub(r'\[(.*?)\]\((.*?\.md)\)', lambda m: f'[{m.group(1)}]({urljoin("/view-md/", m.group(2))})', content)
+    # Prepend /view-md/ to all links pointing to .md files but not starting with #
+    content = re.sub(r'\[(.*?)\]\((?!#)(.*?\.md)\)', lambda m: f'[{m.group(1)}]({urljoin("/view-md/", m.group(2))})', content)
 
     return content
 
 
-# def fetch_markdown_from_github(file_path):
-#     headers = {'Accept': 'application/vnd.github.VERSION.raw'}
-#     response = requests.get(f'{github_repo_url}/{file_path}', headers=headers)
-#     response.raise_for_status()
-#     return response.text
+
+def get_real_folder_path(file_path):
+    return os.path.relpath(os.path.dirname(file_path), local_repo_path)
+
 
 if __name__ == '__main__':
     app.run()
