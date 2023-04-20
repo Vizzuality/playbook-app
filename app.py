@@ -116,7 +116,9 @@ def logout():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    md_content = fetch_markdown_content(os.path.join(local_repo_path, 'public_index.md'))
+    html_content = markdowner.render(md_content)
+    return render_template('public_index.html', content=html_content)
 
 @app.route('/public-page')
 def public_page():

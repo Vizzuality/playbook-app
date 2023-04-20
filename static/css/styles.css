@@ -1,0 +1,35 @@
+/* Apply Roboto font to the entire document */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Set a default margin around the content */
+  .container {
+    margin: 2rem auto;
+    max-width: 1200px;
+  }
+  
+  /* Style the h2 elements */
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #424242;
+  }
+  
+  /* Set the primary color */
+  .primary-color {
+    background-color: #2ba4a0;
+  }
+  
+  nav {
+    background-color: #2ba4a0;
+  }
+  
+  .brand-logo img {
+    height: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    vertical-align: middle;
+}
