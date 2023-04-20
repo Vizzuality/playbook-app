@@ -3,6 +3,7 @@ import subprocess
 import git
 import requests
 import re
+import urllib
 from flask import Flask, render_template, redirect, url_for, session, flash, request, jsonify, send_from_directory
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
@@ -187,7 +188,8 @@ def save_menus_to_files(public_menu, private_menu, local_repo_path):
                 file.write(f"{indent}- {humanize(item)}\n")
                 write_nested_list(file, value, level + 1)
             else:
-                file.write(f"{indent}- [{humanize(item[:-3])}](/view-md/{value})\n")
+                url = urllib.parse.quote(value)  # Quote the URL here
+                file.write(f"{indent}- [{humanize(item[:-3])}](/view-md/{url})\n")
 
     with open(public_index_file, "w") as public_file:
         write_nested_list(public_file, public_menu)
