@@ -12,6 +12,7 @@ from mdit_py_plugins.tasklists import tasklists_plugin
 from dotenv import load_dotenv
 from datetime import datetime
 from urllib.parse import urljoin
+from collections import defaultdict
 
 load_dotenv()
 if os.getenv('OAUTHLIB_INSECURE_TRANSPORT'):
@@ -148,6 +149,13 @@ def update_repo():
 
 # Public functions
 
+import os
+import re
+from collections import defaultdict
+
+def humanize(s):
+    return re.sub(r'[-_]', ' ', s).title()
+
 def build_menus(local_repo_path):
     public_menu = {}
     private_menu = {}
@@ -158,35 +166,34 @@ def build_menus(local_repo_path):
                 rel_path = os.path.relpath(os.path.join(root, file), local_repo_path)
                 rel_dir = os.path.dirname(rel_path)
 
-                if rel_dir not in private_menu:
-                    private_menu[rel_dir] = []
+                menu_to_update = private_menu if file.startswith("private") else public_menu
+                current_level = menu_to_update
+                for folder in rel_dir.split(os.sep):
+                    current_level = current_level.setdefault(folder, {})
 
-                private_menu[rel_dir].append(rel_path)  # Add all pages to the private_menu
-                
-                if not file.startswith("private"):
-                    if rel_dir not in public_menu:
-                        public_menu[rel_dir] = []
-                    public_menu[rel_dir].append(rel_path)  # Add only public pages to the public_menu
+                current_level[file] = rel_path
 
     return public_menu, private_menu
+
 
 def save_menus_to_files(public_menu, private_menu, local_repo_path):
     public_index_file = os.path.join(local_repo_path, "public_index.md")
     private_index_file = os.path.join(local_repo_path, "private_index.md")
 
+    def write_nested_list(file, menu, level=0):
+        indent = "    " * level
+        for item, value in menu.items():
+            if isinstance(value, dict):
+                file.write(f"{indent}- {humanize(item)}\n")
+                write_nested_list(file, value, level + 1)
+            else:
+                file.write(f"{indent}- [{humanize(item[:-3])}](/view-md/{value})\n")
+
     with open(public_index_file, "w") as public_file:
-        for parent_dir, items in public_menu.items():
-            public_file.write(f"## {parent_dir}\n")
-            for item in items:
-                public_file.write(f"- [{item}]({item})\n")
-            public_file.write("\n")
+        write_nested_list(public_file, public_menu)
 
     with open(private_index_file, "w") as private_file:
-        for parent_dir, items in private_menu.items():
-            private_file.write(f"## {parent_dir}\n")
-            for item in items:
-                private_file.write(f"- [{item}]({item})\n")
-            private_file.write("\n")
+        write_nested_list(private_file, private_menu)
 
 
 def create_log_directory(log_dir):
