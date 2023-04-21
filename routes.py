@@ -1,5 +1,6 @@
 from flask import render_template, redirect, url_for, session, flash, request, jsonify, send_from_directory, Blueprint
-from utilities import fetch_markdown_content, pull_changes
+from repo import pull_changes
+from index_builder import fetch_markdown_content
 from config import local_repo_path
 from markdown_it import MarkdownIt
 from mdit_py_plugins.tasklists import tasklists_plugin
