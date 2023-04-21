@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, session, flash, request, jsonify, send_from_directory, Blueprint
+from flask import redirect, url_for, session, flash, request, Blueprint
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from google.auth.transport import requests as google_requests

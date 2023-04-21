@@ -12,8 +12,8 @@ body {
   }
   
   /* Style the h2 elements */
-  h1 {
-    font-size: 2rem; /* Adjust the font size for H1 elements */
+h1 {
+    font-size: 2.4rem; /* Adjust the font size for H1 elements */
     font-weight: 500;
     color: #2ba4a0;
 }

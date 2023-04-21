@@ -1,13 +1,6 @@
 import os
-import re
-import git
 import subprocess
-import urllib
-from config import local_repo_path
-from dotenv import load_dotenv
 from datetime import datetime
-from urllib.parse import urljoin
-from collections import defaultdict
 from index_builder import build_menus, save_menus_to_files
 
 def create_log_directory(log_dir):

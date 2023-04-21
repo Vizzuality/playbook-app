@@ -1,13 +1,8 @@
 import os
 import re
-import git
-import subprocess
 import urllib
 from config import local_repo_path
-from dotenv import load_dotenv
-from datetime import datetime
 from urllib.parse import urljoin
-from collections import defaultdict
 
 def humanize(s):
     return re.sub(r'[-_]', ' ', s).title()
