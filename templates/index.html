@@ -24,12 +24,12 @@
         <nav>
             <div class="nav-wrapper">
             <ul>
-                <li><a href="{{ url_for('public_page') }}">Public Page</a></li>
-                <li><a href="{{ url_for('private_page') }}">Private Page</a></li>
+                <li><a href="{{ url_for('routes.public_page') }}">Public Page</a></li>
+                <li><a href="{{ url_for('routes.private_page') }}">Private Page</a></li>
                 {% if 'email' not in session %}
-                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li><a href="{{ url_for('auth.login') }}">Login</a></li>
                 {% else %}
-                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
                 {% endif %}
             </ul>
         </div>

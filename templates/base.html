@@ -27,15 +27,15 @@
     <div class="container">
       <nav>
         <div class="nav-wrapper">
-            <a href="{{ url_for('index') }}" class="brand-logo">
+            <a href="{{ url_for('routes.index') }}" class="brand-logo">
                 <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Your Logo" />
             </a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('routes.index') }}">Home</a></li>
                 {% if 'email' not in session %}
-                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('auth.login') }}">Login</a></li>
                 {% else %}
-                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
                 {% endif %}
             </ul>
         </div>
