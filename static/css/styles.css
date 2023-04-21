@@ -46,21 +46,18 @@ h3 {
     padding-right: 10px;
     vertical-align: middle;
 }
-/* General styles */
-body {
-    font-family: Arial, sans-serif;
-}
+
 
     /* Style for folder headers */
     ul.collapsible .collapsible-header {
-        background-color: #d0f0f0; /* Lighter variation of #2ba4a0 */
+        background-color: #e8f8f8;/* Lighter variation of #2ba4a0 */
         color: #333;
         font-weight: bold;
     }
 
     /* Style for folder headers when active */
     ul.collapsible .collapsible-header.active {
-        background-color: #a0e0e0; /* Slightly darker variation of the lighter color */
+        background-color: #2ba4a0; /* Slightly darker variation of the lighter color */
         color: #333;
     }
 
@@ -91,122 +88,6 @@ body {
         background-color: #e0e0e0; /* Slightly darker gray for hovered links */
         color: #333;
     }
-</style>
-This code sets different background colors for the folder headers, active folder headers, and the link elements using lighter variations of the color #2ba4a0. Adjust the colors and other style properties to match your desired appearance.
-
-
-
-
-
-Miguel Mendoza
-no, links and folders look the same
-I apologize for the confusion. Let me provide you with an updated CSS code that differentiates between the collapsible folder headers and the link elements:
-
-html
-Copy code
-<style>
-    /* General styles */
-    body {
-        font-family: Arial, sans-serif;
-    }
-
-    /* Style for folder headers */
-    ul.collapsible .collapsible-header {
-        background-color: #d0f0f0; /* Lighter variation of #2ba4a0 */
-        color: #333;
-    }
-
-    /* Style for folder headers when active */
-    ul.collapsible .collapsible-header.active {
-        background-color: #a0e0e0; /* Slightly darker variation of the lighter color */
-        color: #333;
-    }
-
-    /* Style for nested folder headers */
-    ul.collapsible .collapsible-body ul.collapsible > li > .collapsible-header {
-        background-color: #e8f8f8; /* Very light variation of #2ba4a0 */
-        color: #333;
-        font-weight: normal;
-    }
-
-    /* Style for nested folder headers when active */
-    ul.collapsible .collapsible-body ul.collapsible > li > .collapsible-header.active {
-        background-color: #c8f0f0; /* Slightly darker variation of the very light color */
-        color: #333;
-    }
-
-    /* Style for link elements */
-    ul.collapsible li a {
-        background-color: transparent; /* No background color for links */
-        color: #2ba4a0; /* Links color same as the base color */
-        text-decoration: none;
-        display: block;
-        padding: 1em;
-    }
-
-    /* Style for link elements when hovered */
-    ul.collapsible li a:hover {
-        background-color: #e8f8f8; /* Very light variation of #2ba4a0 for hovered links */
-        color: #333;
-    }
-</style>
-With this updated code, the link elements will not have a background color by default, and their color will match the base color (#2ba4a0). When hovered, the links will have a very light variation of the base color as their background. The folder headers and link elements should now look different from each other.
-
-
-
-
-
-Miguel Mendoza
-No, could we have the folders with a bigger font and the links underlined?
-Certainly! You can adjust the font size for the folder headers and add an underline to the link elements with the following CSS code:
-
-html
-Copy code
-<style>
-    /* General styles */
-    body {
-        font-family: Arial, sans-serif;
-    }
-
-    /* Style for folder headers */
-    ul.collapsible .collapsible-header {
-        background-color: #d0f0f0; /* Lighter variation of #2ba4a0 */
-        color: #333;
-        font-size: 1.2em; /* Bigger font size for folder headers */
-    }
-
-    /* Style for folder headers when active */
-    ul.collapsible .collapsible-header.active {
-        background-color: #a0e0e0; /* Slightly darker variation of the lighter color */
-        color: #333;
-    }
-
-    /* Style for nested folder headers */
-    ul.collapsible .collapsible-body ul.collapsible > li > .collapsible-header {
-        background-color: #e8f8f8; /* Very light variation of #2ba4a0 */
-        color: #333;
-        font-weight: normal;
-    }
-
-    /* Style for nested folder headers when active */
-    ul.collapsible .collapsible-body ul.collapsible > li > .collapsible-header.active {
-        background-color: #c8f0f0; /* Slightly darker variation of the very light color */
-        color: #333;
-    }
-
-    /* Style for link elements */
-    ul.collapsible li a {
-        background-color: transparent; /* No background color for links */
-        color: #2ba4a0; /* Links color same as the base color */
-        text-decoration: underline; /* Add underline to link elements */
-        display: block;
-        padding: 1em;
-        font-size: 0.9em; /* Smaller font size for links */
-        font-weight: normal; /* Normal font weight for links */
-    }
-
-    /* Style for link elements when hovered */
-    ul.collapsible li a:hover {
-        background-color: #e8f8f8; /* Very light variation of #2ba4a0 for hovered links */
-        color: #333;
+    .tiny.material-icons {
+        color: #2ba4a0;
     }

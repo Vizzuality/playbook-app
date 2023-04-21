@@ -189,7 +189,7 @@ def save_menus_to_files(public_menu, private_menu, local_repo_path):
         for item, value in menu.items():
             if isinstance(value, dict):
                 file.write(f'{indent}    <li>\n')
-                file.write(f'{indent}        <div class="collapsible-header">{humanize(item)}</div>\n')
+                file.write(f'{indent}        <div class="collapsible-header"><i class="tiny material-icons">chevron_right</i>{" " + humanize(item)}</div>\n') 
                 file.write(f'{indent}        <div class="collapsible-body">\n')
                 write_nested_list(file, value, level + 1)
                 file.write(f'{indent}        </div>\n')
