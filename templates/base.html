@@ -20,6 +20,7 @@
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
     />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='js/materialize.min.js') }}"></script>
   </head>
   <body>
@@ -97,6 +98,24 @@
           }
         }
       });
+      
+      function initCollapsibles() {
+  console.log("Initializing collapsibles");
+  var elems = document.querySelectorAll(".collapsible");
+  var instances = M.Collapsible.init(elems);
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", function() {
+    init();
+    initCollapsibles();
+  });
+} else {
+  init();
+  initCollapsibles();
+}
+
+
     </script>
   </body>
 </html>
