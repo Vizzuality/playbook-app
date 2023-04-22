@@ -1,10 +1,10 @@
-import urllib
 import os
 from utils import humanize
+from flask import url_for
 
 def breadcrumbs(md_path):
     parts = md_path.split(os.sep)
-    breadcrumbs_list = []
+    breadcrumbs_list = [{'name': 'Home', 'url': url_for('routes.index') }]
     url_parts = []
 
     for part in parts:
