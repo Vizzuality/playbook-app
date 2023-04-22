@@ -4,6 +4,7 @@ from index_builder import fetch_markdown_content
 from config import local_repo_path
 from markdown_it import MarkdownIt
 from mdit_py_plugins.tasklists import tasklists_plugin
+from breadcrumbs import breadcrumbs
 
 import os
 markdowner = MarkdownIt().use(tasklists_plugin)
@@ -13,16 +14,27 @@ routes = Blueprint('routes', __name__)
 def serve_image(subpath):
     return send_from_directory(local_repo_path, subpath)
 
+@routes.route('/view-folder/', defaults={'folder': ''})
+@routes.route('/view-folder/<path:folder>')
+def view_folder(folder):
+    full_path = os.path.join(local_repo_path, folder)
+    if not os.path.isdir(full_path):
+        return "Folder not found", 404
+
+    # ... logic to fetch the list of files and folders contained in the current folder ...
+
+    breadcrumbs_list = breadcrumbs(os.path.join(folder, "dummy.md"))
+    return render_template('folder_page.html', items=items, breadcrumbs=breadcrumbs_list)
+
 @routes.route('/view-md/<path:md_path>')
 def view_md(md_path):
     full_path = os.path.join(local_repo_path, md_path)
     if not os.path.isfile(full_path) or not full_path.endswith('.md'):
         return "File not found", 404
-
     md_content = fetch_markdown_content(full_path)
     html_content = markdowner.render(md_content)
-    return render_template('public_page.html', content=html_content)
-
+    breadcrumbs_list = breadcrumbs(md_path)
+    return render_template('public_page.html', content=html_content, breadcrumbs=breadcrumbs_list, active_folder=md_path)
 
 @routes.route('/repo/<path:path>')
 def serve_repo_files(path):
@@ -30,9 +42,10 @@ def serve_repo_files(path):
 
 @routes.route('/')
 def index():
+    folder = request.args.get('folder', None)
     md_content = fetch_markdown_content(os.path.join(local_repo_path, 'public_index.md'))
     html_content = markdowner.render(md_content)
-    return render_template('public_index.html', content=html_content)
+    return render_template('public_index.html', content=html_content, active_folder=folder)
 
 @routes.route('/public-page')
 def public_page():

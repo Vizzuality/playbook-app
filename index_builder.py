@@ -1,11 +1,9 @@
 import os
 import re
 import urllib
+from utils import humanize
 from config import local_repo_path
 from urllib.parse import urljoin
-
-def humanize(s):
-    return re.sub(r'[-_]', ' ', s).title()
 
 def build_menus(local_repo_path):
     public_menu = {}
@@ -14,10 +12,12 @@ def build_menus(local_repo_path):
     for root, dirs, files in os.walk(local_repo_path):
         for file in files:
             if file.endswith(".md"):
-                rel_path = os.path.relpath(os.path.join(root, file), local_repo_path)
+                rel_path = os.path.relpath(
+                    os.path.join(root, file), local_repo_path)
                 rel_dir = os.path.dirname(rel_path)
 
-                menu_to_update = private_menu if file.startswith("private") else public_menu
+                menu_to_update = private_menu if file.startswith(
+                    "private") else public_menu
                 current_level = menu_to_update
                 for folder in rel_dir.split(os.sep):
                     current_level = current_level.setdefault(folder, {})
@@ -62,7 +62,7 @@ def save_menus_to_files(public_menu, private_menu, local_repo_path):
 
     with open(private_index_file, "w") as private_file:
         write_nested_list(private_file, private_menu)
-1
+
 def fetch_markdown_content(file_path):
     with open(file_path, 'r') as file:
         content = file.read()
@@ -70,12 +70,15 @@ def fetch_markdown_content(file_path):
     # Get the real folder path
     real_folder_path = get_real_folder_path(file_path)
     # Find image paths and prepend the /images/ route and the real folder path to the path
-    content = re.sub(r'\!\[(.*?)\]\((.*?)\)', fr'![\1](/images/{real_folder_path}/\2)', content)
+    content = re.sub(r'\!\[(.*?)\]\((.*?)\)',
+                     fr'![\1](/images/{real_folder_path}/\2)', content)
 
     # Prepend /view-md/ to all links pointing to .md files but not starting with #
-    content = re.sub(r'\[(.*?)\]\((?!#)(.*?\.md)\)', lambda m: f'[{m.group(1)}]({urljoin("/view-md/", m.group(2))})', content)
+    content = re.sub(r'\[(.*?)\]\((?!#)(.*?\.md)\)',
+                     lambda m: f'[{m.group(1)}]({urljoin("/view-md/", m.group(2))})', content)
 
     return content
 
 def get_real_folder_path(file_path):
     return os.path.relpath(os.path.dirname(file_path), local_repo_path)
+

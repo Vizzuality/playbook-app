@@ -27,93 +27,175 @@
     <div class="container">
       <nav>
         <div class="nav-wrapper">
-            <a href="{{ url_for('routes.index') }}" class="brand-logo">
-                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Your Logo" />
-            </a>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li><a href="{{ url_for('routes.index') }}">Home</a></li>
-                {% if 'email' not in session %}
-                    <li><a href="{{ url_for('auth.login') }}">Login</a></li>
-                {% else %}
-                    <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
-                {% endif %}
-            </ul>
+          <a href="{{ url_for('routes.index') }}" class="brand-logo">
+            <img
+              src="{{ url_for('static', filename='images/logo.svg') }}"
+              alt="Your Logo"
+            />
+          </a>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="{{ url_for('routes.index') }}">Home</a></li>
+            {% if 'email' not in session %}
+            <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+            {% else %}
+            <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+            {% endif %}
+          </ul>
         </div>
-    </nav>
-    
+      </nav>
+      <nav>
+        <div class="nav-wrapper">
+          <div class="col s12">
+            {% for breadcrumb in breadcrumbs %} {% if loop.last %}
+            <a href="#" class="breadcrumb">{{ breadcrumb.name }}</a>
+            {% else %}
+            <a href="/?folder={{ breadcrumb.url.replace('-', ' ')|urlencode }}" class="breadcrumb">{{ breadcrumb.name }}</a>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
+      </nav>
 
       <main>{% block content %} {% endblock %}</main>
     </div>
     <script>
-      function removeNonAlphanumeric(str) {
-        return str.replace(/[^a-zA-Z0-9]/g, "");
-      }
+                  function removeNonAlphanumeric(str) {
+                    return str.replace(/[^a-zA-Z0-9]/g, "");
+                  }
 
-      function scrollToHeading(hash) {
-        const anchorText = removeNonAlphanumeric(
-          decodeURIComponent(hash.substring(1)).toLowerCase()
-        );
-        const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
-        const targetHeading = Array.from(headings).find(
-          (heading) =>
-            removeNonAlphanumeric(heading.textContent.toLowerCase()) ===
-            anchorText
-        );
+                  function scrollToHeading(hash) {
+                    const anchorText = removeNonAlphanumeric(
+                      decodeURIComponent(hash.substring(1)).toLowerCase()
+                    );
+                    const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+                    const targetHeading = Array.from(headings).find(
+                      (heading) =>
+                        removeNonAlphanumeric(heading.textContent.toLowerCase()) ===
+                        anchorText
+                    );
 
-        if (targetHeading) {
-          targetHeading.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-            inline: "nearest",
-          });
-        }
-      }
+                    if (targetHeading) {
+                      targetHeading.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                        inline: "nearest",
+                      });
+                    }
+                  }
 
-      function init() {
-        console.log("DOMContentLoaded event fired");
+                  function init() {
+                    console.log("DOMContentLoaded event fired");
 
-        if (window.location.hash) {
-          const hash = window.location.hash;
-          console.log("Hash:", hash);
-          scrollToHeading(hash);
-        }
-      }
+                    if (window.location.hash) {
+                      const hash = window.location.hash;
+                      console.log("Hash:", hash);
+                      scrollToHeading(hash);
+                    }
+                  }
 
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", init);
+                  if (document.readyState === "loading") {
+                    document.addEventListener("DOMContentLoaded", init);
+                  } else {
+                    init();
+                  }
+
+                  document.addEventListener("click", function (event) {
+                    const target = event.target.closest('a[href^="#"]');
+
+                    if (target) {
+                      event.preventDefault();
+                      const hash = target.hash;
+
+                      if (hash) {
+                        scrollToHeading(hash);
+                        window.history.pushState(null, "", hash); // Update the URL to include the hash
+                      }
+                    }
+                  });
+
+                  function initCollapsibles() {
+    console.log("Initializing collapsibles");
+    var elems = document.querySelectorAll(".collapsible");
+    var instances = M.Collapsible.init(elems, {accordion: false});
+}
+
+
+function openParentCollapsibles(element) {
+  let parentCollapsible = element.closest(".collapsible");
+  if (!parentCollapsible) {
+    return;
+  }
+
+  let parentLi = parentCollapsible.closest("li");
+  if (!parentLi) {
+    return;
+  }
+
+  let index = Array.from(parentLi.parentNode.children).indexOf(parentLi);
+  let collapsibleInstance = M.Collapsible.getInstance(parentLi.closest(".collapsible"));
+
+  collapsibleInstance.open(index);
+  openParentCollapsibles(parentLi);
+}
+
+function openParentCollapsibles(element) {
+  let parentCollapsible = element.closest(".collapsible");
+  if (!parentCollapsible) {
+    return;
+  }
+
+  let parentLi = parentCollapsible.closest("li");
+  if (!parentLi) {
+    return;
+  }
+
+  let index = Array.from(parentLi.parentNode.children).indexOf(parentLi);
+  let collapsibleInstance = M.Collapsible.getInstance(parentLi.closest(".collapsible"));
+
+  collapsibleInstance.open(index);
+  openParentCollapsibles(parentLi);
+}
+
+function uncollapseActiveFolder() {
+  {% if active_folder %}
+    var activeFolderPath = "{{ active_folder }}";
+    console.log("activeFolderPath:", activeFolderPath);
+
+    var lastFolder = activeFolderPath.split('/').slice(-1)[0];
+    var decodedLastFolder = decodeURIComponent(lastFolder);
+    console.log("decodedLastFolder:", decodedLastFolder);
+
+    var links = Array.from(document.querySelectorAll('.collapsible a')).filter(function(a) {
+      return a.href.includes(decodedLastFolder);
+    });
+
+    if (links.length > 0) {
+      var link = links[0];
+      var parentLi = link.closest("li");
+
+      if (link.href) {
+        parentLi.classList.add("active");
       } else {
-        init();
+        openParentCollapsibles(parentLi);
       }
-
-      document.addEventListener("click", function (event) {
-        const target = event.target.closest('a[href^="#"]');
-
-        if (target) {
-          event.preventDefault();
-          const hash = target.hash;
-
-          if (hash) {
-            scrollToHeading(hash);
-            window.history.pushState(null, "", hash); // Update the URL to include the hash
-          }
-        }
-      });
-      
-      function initCollapsibles() {
-  console.log("Initializing collapsibles");
-  var elems = document.querySelectorAll(".collapsible");
-  var instances = M.Collapsible.init(elems);
+    }
+  {% endif %}
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", function() {
-    init();
-    initCollapsibles();
-  });
-} else {
-  init();
+document.addEventListener("DOMContentLoaded", function() {
   initCollapsibles();
-}
+  uncollapseActiveFolder();
+});
+
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+  initCollapsibles();
+  uncollapseActiveFolder();
+});
+
+
+
 
 
     </script>

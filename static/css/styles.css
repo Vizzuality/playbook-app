@@ -50,33 +50,33 @@ h3 {
 
     /* Style for folder headers */
     ul.collapsible .collapsible-header {
-        background-color: #e8f8f8;/* Lighter variation of #2ba4a0 */
+        background-color: #ffffff;/* Lighter variation of #2ba4a0 */
         color: #333;
         font-weight: bold;
     }
 
     /* Style for folder headers when active */
     ul.collapsible .collapsible-header.active {
-        background-color: #2ba4a0; /* Slightly darker variation of the lighter color */
+        background-color: #ffffff; /* Slightly darker variation of the lighter color */
         color: #333;
     }
 
     /* Style for nested folder headers */
     ul.collapsible .collapsible-body ul.collapsible > li > .collapsible-header {
-        background-color: #e8f8f8; /* Very light variation of #2ba4a0 */
+        background-color: #ffffff; /* Very light variation of #2ba4a0 */
         color: #333;
         font-weight: normal;
     }
 
     /* Style for nested folder headers when active */
     ul.collapsible .collapsible-body ul.collapsible > li > .collapsible-header.active {
-        background-color: #c8f0f0; /* Slightly darker variation of the very light color */
+        background-color: #ffffff; /* Slightly darker variation of the very light color */
         color: #333;
     }
 
     /* Style for link elements */
     ul.collapsible li a {
-        background-color: #f5f5f5; /* Very light gray for links */
+        background-color: #ffffff; /* Very light gray for links */
         color: #333;
         text-decoration: none;
         display: block;
