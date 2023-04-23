@@ -1,54 +1,74 @@
-$(document).ready(function () {
-  initCollapsibles();
+document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(initCollapsibles, 100);
 });
 
-$(document).on("collapsiblesInitialized", function () {
-  uncollapseActiveFolder();
+document.addEventListener("collapsiblesInitialized", function () {
+  setTimeout(uncollapseActiveFolder, 100);
 });
+
+function initCollapsibles() {
+  console.log("Initializing collapsibles");
+  var elems = document.querySelectorAll(".collapsible");
+  
+  elems.forEach(function (elem) {
+    M.Collapsible.init(elem, {
+      accordion: false,
+      onOpenEnd: function () {
+        updateAllChevrons();
+      },
+      onCloseEnd: function () {
+        updateAllChevrons();
+      }
+    });
+  });
+
+  // Add event listeners to update the chevron when collapsible is opened or closed
+  var headers = document.querySelectorAll(".collapsible .collapsible-header");
+  headers.forEach(function (header) {
+    header.addEventListener("click", function (event) {
+      setTimeout(updateAllChevrons, 100);
+    });
+  });
+
+  // Dispatch a custom event when collapsibles are initialized
+  var event = new Event("collapsiblesInitialized");
+  document.dispatchEvent(event);
+}
+
+
 
 function updateChevron(element) {
-  var chevron = $(element).find(".collapsible-header i");
-  if (chevron.length) {
-    if ($(element).hasClass("active")) {
-      chevron.text("expand_more");
+  var chevron = element.querySelector(".collapsible-header i");
+  if (chevron) {
+    if (element.classList.contains("active")) {
+      chevron.textContent = "expand_more";
     } else {
-      chevron.text("chevron_right");
+      chevron.textContent = "chevron_right";
     }
   }
 }
 
 function updateAllChevrons() {
-  $(".collapsible li").each(function () {
-    updateChevron(this);
+  var collapsibleHeaders = document.querySelectorAll(".collapsible li");
+  collapsibleHeaders.forEach(function (element) {
+    updateChevron(element);
   });
-}
-
-function initCollapsibles() {
-  var elems = $(".collapsible");
-  var instances = M.Collapsible.init(elems.get(), { accordion: false });
-
-  $(".collapsible .collapsible-header").on("click", function (event) {
-    setTimeout(updateAllChevrons, 100);
-  });
-
-  var event = jQuery.Event("collapsiblesInitialized");
-  $(document).trigger(event);
 }
 
 function openParentCollapsibles(element) {
-  let parentCollapsible = $(element).closest(".collapsible");
-  if (!parentCollapsible.length) {
+  let parentCollapsible = element.closest(".collapsible");
+  if (!parentCollapsible) {
     return;
   }
 
   let parentLi = parentCollapsible.closest("li");
-  if (!parentLi.length) {
+  if (!parentLi) {
     return;
   }
 
-  let index = parentLi.parent().children().index(parentLi);
+  let index = Array.from(parentLi.parentNode.children).indexOf(parentLi);
   let collapsibleInstance = M.Collapsible.getInstance(
-    parentLi.closest(".collapsible").get(0)
+    parentLi.closest(".collapsible")
   );
 
   collapsibleInstance.open(index);
@@ -63,16 +83,18 @@ function uncollapseActiveFolder() {
     return;
   }
 
-  var links = $(".collapsible a[data-folder], .collapsible div.collapsible-header[data-folder]").toArray();
+  console.log("activeFolderName:", activeFolderName);
+
+  var links = Array.from(document.querySelectorAll(".collapsible a[data-folder], .collapsible div.collapsible-header[data-folder]"));
 
   var activeLink = links.find(function (element) {
-    var elementFolder = $(element).attr("data-folder");
+    var elementFolder = element.getAttribute("data-folder");
     return elementFolder === activeFolderName;
   });
 
   if (activeLink) {
-    var parentLi = $(activeLink).closest("li");
-    parentLi.addClass("active");
+    var parentLi = activeLink.closest("li");
+    parentLi.classList.add("active");
     openParentCollapsibles(parentLi);
   }
 }
