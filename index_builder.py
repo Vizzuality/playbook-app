@@ -17,23 +17,23 @@ def build_menus(local_repo_path):
                 rel_dir = os.path.dirname(rel_path)
 
                 is_private = file.startswith("private")
-                menu_to_update = private_menu
-                current_level = menu_to_update
+
+                # Update private menu
+                current_level = private_menu
                 for folder in rel_dir.split(os.sep):
                     current_level = current_level.setdefault(folder, {})
 
                 current_level[file] = rel_path
 
+                # Update public menu if not private
                 if not is_private:
-                    menu_to_update = public_menu
-                    current_level = menu_to_update
+                    current_level = public_menu
                     for folder in rel_dir.split(os.sep):
                         current_level = current_level.setdefault(folder, {})
 
                     current_level[file] = rel_path
 
     return public_menu, private_menu
-
 
 
 def save_menus_to_files(public_menu, private_menu, local_repo_path):

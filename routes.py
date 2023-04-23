@@ -5,6 +5,7 @@ from config import local_repo_path
 from markdown_it import MarkdownIt
 from mdit_py_plugins.tasklists import tasklists_plugin
 from breadcrumbs import breadcrumbs
+from flask import session
 
 import os
 markdowner = MarkdownIt().use(tasklists_plugin)
@@ -43,24 +44,30 @@ def serve_repo_files(path):
 @routes.route('/')
 def index():
     folder = request.args.get('folder', None)
-    md_content = fetch_markdown_content(os.path.join(local_repo_path, 'public_index.md'))
-    html_content = markdowner.render(md_content)
-    return render_template('public_index.html', content=html_content, active_folder=folder)
-
-@routes.route('/public-page')
-def public_page():
-    md_content = fetch_markdown_content(os.path.join(local_repo_path, 'public_index.md'))
-    html_content = markdowner.render(md_content)
-    return render_template('public_index.html', content=html_content)
-
-@routes.route('/private-page')
-def private_page():
     if 'email' not in session:
-        flash('You need to be logged in to access this page.', 'error')
-        return redirect(url_for('login'))
-    md_content = fetch_markdown_content(os.path.join(local_repo_path, 'private_index.md'))
+        md_content = fetch_markdown_content(os.path.join(local_repo_path, 'public_index.md'))
+        template_name = 'public_index.html'
+    else:
+        md_content = fetch_markdown_content(os.path.join(local_repo_path, 'private_index.md'))
+        template_name = 'private_index.html'
+
     html_content = markdowner.render(md_content)
-    return render_template('private_index.html', content=html_content)
+    return render_template(template_name, content=html_content, active_folder=folder)
+
+# @routes.route('/public-page')
+# def public_page():
+#     md_content = fetch_markdown_content(os.path.join(local_repo_path, 'public_index.md'))
+#     html_content = markdowner.render(md_content)
+#     return render_template('public_index.html', content=html_content)
+
+# @routes.route('/private-page')
+# def private_page():
+#     if 'email' not in session:
+#         flash('You need to be logged in to access this page.', 'error')
+#         return redirect(url_for('login'))
+#     md_content = fetch_markdown_content(os.path.join(local_repo_path, 'private_index.md'))
+#     html_content = markdowner.render(md_content)
+#     return render_template('private_index.html', content=html_content)
 
 @routes.route('/update-repo', methods=['post'])
 def update_repo():
