@@ -32,7 +32,7 @@ def view_md(md_path):
     if "private" in md_path.split("/")[-1] and 'email' not in session:
         return redirect(url_for('auth.login'))
 
-    full_path = os.path.join(local_repo_path, md_path)
+    full_path = os.path.join(local_repo_path, md_path + '.md')
     if not os.path.isfile(full_path) or not full_path.endswith('.md'):
         return "File not found", 404
     md_content = fetch_markdown_content(full_path)
