@@ -6,14 +6,16 @@ This is a Python 3 Flask application that serves a playbook consisting of Markdo
 
 The app requires the following external libraries:
 
-- Flask
-- python-dotenv
+- flask
+- google
+- flask-googlemaps
 - google-auth
 - google-auth-oauthlib
 - google-auth-httplib2
 - google-api-python-client
 - markdown-it-py
 - mdit-py-plugins
+- python-dotenv
 
 ## Installation
 
