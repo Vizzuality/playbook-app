@@ -91,3 +91,39 @@ h3 {
     .tiny.material-icons {
         color: #2ba4a0;
     }
+
+    .breadcrumb:last-child {
+        font-weight: 500;
+   }
+    .breadcrumb.dark {
+        color: rgba(0, 0, 0, 0.5);
+        line-height: 64px;
+   }
+    .breadcrumb.dark:before {
+        color: rgba(0, 0, 0, 0.2);
+        vertical-align: middle;
+   }
+    .breadcrumb.dark:last-child {
+        color: rgba(0, 0, 0, 1);
+   }
+    .breadcrumb.dark i {
+        line-height: 64px;
+   }
+   .breadcrumbs-nav{
+        background-color: transparent;
+        color: black;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        height: 64px;
+        line-height: 64px;
+   }
+   .breadcrumb, a.breadcrumb{
+        color: black;
+        font-family: 'Roboto', sans-serif;
+   }
+   .breadcrumb:before {
+        color: black;
+    }
+    .breadcrumb:last-child {
+        color: #000000;
+    }

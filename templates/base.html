@@ -24,46 +24,51 @@
     <script src="{{ url_for('static', filename='js/materialize.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scroller.js') }}"></script>
     <script src="{{ url_for('static', filename='js/collapsible_lists.js') }}"></script>
-
   </head>
   <body>
+    <nav>
+      <div class="row">
+        <div class="col s12">
+      <div class="nav-wrapper">
+        <a href="{{ url_for('routes.index') }}" class="brand-logo">
+          <img
+            src="{{ url_for('static', filename='images/logo.svg') }}"
+            alt="Vizzuality"
+          />
+        </a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="{{ url_for('routes.index') }}">Home</a></li>
+          {% if 'email' not in session %}
+          <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+          {% else %}
+          <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+    <nav class="breadcrumbs-nav">
+      <div class="row">
+        <div class="col s12">
+          {% for breadcrumb in breadcrumbs %} {% if loop.last %}
+          <a href="#" class="breadcrumb">{{ breadcrumb.name }}</a>
+          {% else %}
+          <a
+            href="/?folder={{ breadcrumb.url.replace('-', ' ')|urlencode }}"
+            class="breadcrumb"
+            >{{ breadcrumb.name }}</a
+          >
+          {% endif %} {% endfor %}
+        </div>
+      </div>
+        </div>
+      </div>
+    </nav>
     <div class="container">
-      <nav>
-        <div class="nav-wrapper">
-          <a href="{{ url_for('routes.index') }}" class="brand-logo">
-            <img
-              src="{{ url_for('static', filename='images/logo.svg') }}"
-              alt="Vizzuality"
-            />
-          </a>
-          <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="{{ url_for('routes.index') }}">Home</a></li>
-            {% if 'email' not in session %}
-            <li><a href="{{ url_for('auth.login') }}">Login</a></li>
-            {% else %}
-            <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
-            {% endif %}
-          </ul>
+      <div class="row">
+        <div class="col s12">
+          <main>{% block content %} {% endblock %}</main>
         </div>
-      </nav>
-      <nav>
-        <div class="nav-wrapper">
-          <div class="col s12">
-            {% for breadcrumb in breadcrumbs %} {% if loop.last %}
-            <a href="#" class="breadcrumb">{{ breadcrumb.name }}</a>
-            {% else %}
-            <a href="/?folder={{ breadcrumb.url.replace('-', ' ')|urlencode }}" class="breadcrumb">{{ breadcrumb.name }}</a>
-            {% endif %} {% endfor %}
-          </div>
-        </div>
-      </nav>
-
-      <main>{% block content %} {% endblock %}</main>
+      </div>
     </div>
-    <script>
- 
-
-
-    </script>
   </body>
 </html>

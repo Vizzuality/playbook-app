@@ -31,13 +31,39 @@ def save_menus_to_files(public_menu, private_menu, local_repo_path):
     public_index_file = os.path.join(local_repo_path, "public_index.md")
     private_index_file = os.path.join(local_repo_path, "private_index.md")
 
+    # def write_nested_list(file, menu, level=0):
+    #     indent = "    " * level
+    #     file.write(f'{indent}<ul class="collapsible" data-collapsible="expandable">\n')
+    #     for item, value in menu.items():
+    #         if isinstance(value, dict):
+    #             file.write(f'{indent}    <li>\n')
+    #             file.write(f'{indent}        <div class="collapsible-header"><i class="tiny material-icons">chevron_right</i>{humanize(item)}</div>\n') 
+    #             file.write(f'{indent}        <div class="collapsible-body">\n')
+    #             write_nested_list(file, value, level + 1)
+    #             file.write(f'{indent}        </div>\n')
+    #             file.write(f'{indent}    </li>\n')
+    #         else:
+    #             url = urllib.parse.quote(value)  # Quote the URL here
+    #             file.write(f'{indent}    <li>\n')
+    #             file.write(f'{indent}        <a href="/view-md/{url}" onclick="event.stopPropagation();" class="collapsible-header">{humanize(item[:-3])}</a>\n')
+    #             file.write(f'{indent}    </li>\n')
+    #     file.write(f'{indent}</ul>\n')
+
+    #     if level == 0:
+    #         file.write('<script>\n')
+    #         file.write('    document.addEventListener("DOMContentLoaded", function() {\n')
+    #         file.write('        var elems = document.querySelectorAll(".collapsible");\n')
+    #         file.write('        var instances = M.Collapsible.init(elems, {accordion: false});\n')
+    #         file.write('    });\n')
+    #         file.write('</script>\n')
+
     def write_nested_list(file, menu, level=0):
         indent = "    " * level
         file.write(f'{indent}<ul class="collapsible" data-collapsible="expandable">\n')
         for item, value in menu.items():
             if isinstance(value, dict):
                 file.write(f'{indent}    <li>\n')
-                file.write(f'{indent}        <div class="collapsible-header"><i class="tiny material-icons">chevron_right</i>{" " + humanize(item)}</div>\n') 
+                file.write(f'{indent}        <div class="collapsible-header" data-folder="{humanize(item)}"><i class="tiny material-icons">chevron_right</i>{humanize(item)}</div>\n') 
                 file.write(f'{indent}        <div class="collapsible-body">\n')
                 write_nested_list(file, value, level + 1)
                 file.write(f'{indent}        </div>\n')
@@ -45,7 +71,7 @@ def save_menus_to_files(public_menu, private_menu, local_repo_path):
             else:
                 url = urllib.parse.quote(value)  # Quote the URL here
                 file.write(f'{indent}    <li>\n')
-                file.write(f'{indent}        <a href="/view-md/{url}" onclick="event.stopPropagation();" class="collapsible-header">{humanize(item[:-3])}</a>\n')
+                file.write(f'{indent}        <a href="/view-md/{url}" data-folder="{humanize(item[:-3])}" onclick="event.stopPropagation();" class="collapsible-header">{humanize(item[:-3])}</a>\n')
                 file.write(f'{indent}    </li>\n')
         file.write(f'{indent}</ul>\n')
 
@@ -54,6 +80,7 @@ def save_menus_to_files(public_menu, private_menu, local_repo_path):
             file.write('    document.addEventListener("DOMContentLoaded", function() {\n')
             file.write('        var elems = document.querySelectorAll(".collapsible");\n')
             file.write('        var instances = M.Collapsible.init(elems, {accordion: false});\n')
+            file.write('        uncollapseActiveFolder();')
             file.write('    });\n')
             file.write('</script>\n')
 

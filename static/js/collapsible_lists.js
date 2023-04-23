@@ -1,8 +1,19 @@
+document.addEventListener("DOMContentLoaded", function () {
+  initCollapsibles();
+});
+
+document.addEventListener("collapsiblesInitialized", function () {
+  uncollapseActiveFolder();
+});
 
 function initCollapsibles() {
-    console.log("Initializing collapsibles");
-    var elems = document.querySelectorAll(".collapsible");
-    var instances = M.Collapsible.init(elems, {accordion: false});
+  console.log("Initializing collapsibles");
+  var elems = document.querySelectorAll(".collapsible");
+  var instances = M.Collapsible.init(elems, { accordion: false });
+
+  // Dispatch a custom event when collapsibles are initialized
+  var event = new Event("collapsiblesInitialized");
+  document.dispatchEvent(event);
 }
 
 function openParentCollapsibles(element) {
@@ -17,68 +28,60 @@ function openParentCollapsibles(element) {
   }
 
   let index = Array.from(parentLi.parentNode.children).indexOf(parentLi);
-  let collapsibleInstance = M.Collapsible.getInstance(parentLi.closest(".collapsible"));
+  let collapsibleInstance = M.Collapsible.getInstance(
+    parentLi.closest(".collapsible")
+  );
 
   collapsibleInstance.open(index);
-  openParentCollapsibles(parentLi);
+  openParentCollapsibles(parentLi.closest(".collapsible"));
 }
 
-function openParentCollapsibles(element) {
-  let parentCollapsible = element.closest(".collapsible");
-  if (!parentCollapsible) {
-    return;
-  }
 
-  let parentLi = parentCollapsible.closest("li");
-  if (!parentLi) {
-    return;
-  }
 
-  let index = Array.from(parentLi.parentNode.children).indexOf(parentLi);
-  let collapsibleInstance = M.Collapsible.getInstance(parentLi.closest(".collapsible"));
 
-  collapsibleInstance.open(index);
-  openParentCollapsibles(parentLi);
-}
+// function uncollapseActiveFolder() {
+//   var urlParams = new URLSearchParams(window.location.search);
+//   var activeFolderName = urlParams.get("folder");
+//   if (!activeFolderName) {
+//     return;
+//   }
+
+//   console.log("activeFolderName:", activeFolderName);
+
+//   var links = Array.from(document.querySelectorAll(".collapsible a, .collapsible div.collapsible-header"));
+
+//   var activeLink = links.find(function (element) {
+//     return element.textContent.includes(activeFolderName);
+//   });
+
+//   if (activeLink) {
+//     var parentLi = activeLink.closest("li");
+//     parentLi.classList.add("active");
+//     openParentCollapsibles(parentLi);
+//   }
+// }
+
+// uncollapseActiveFolder();
 
 function uncollapseActiveFolder() {
-  {% if active_folder %}
-    var activeFolderPath = "{{ active_folder }}";
-    console.log("activeFolderPath:", activeFolderPath);
+  var urlParams = new URLSearchParams(window.location.search);
+  var activeFolderName = urlParams.get("folder");
+  if (!activeFolderName) {
+    return;
+  }
 
-    var lastFolder = activeFolderPath.split('/').slice(-1)[0];
-    var decodedLastFolder = decodeURIComponent(lastFolder);
-    console.log("decodedLastFolder:", decodedLastFolder);
+  console.log("activeFolderName:", activeFolderName);
 
-    var links = Array.from(document.querySelectorAll('.collapsible a')).filter(function(a) {
-      return a.href.includes(decodedLastFolder);
-    });
+  var links = Array.from(document.querySelectorAll(".collapsible a[data-folder], .collapsible div.collapsible-header[data-folder]"));
 
-    if (links.length > 0) {
-      var link = links[0];
-      var parentLi = link.closest("li");
+  var activeLink = links.find(function (element) {
+    var elementFolder = element.getAttribute("data-folder");
+    return elementFolder === activeFolderName;
+  });
 
-      if (link.href) {
-        parentLi.classList.add("active");
-      } else {
-        openParentCollapsibles(parentLi);
-      }
-    }
-  {% endif %}
+  if (activeLink) {
+    var parentLi = activeLink.closest("li");
+    parentLi.classList.add("active");
+    openParentCollapsibles(parentLi);
+  }
 }
-
-document.addEventListener("DOMContentLoaded", function() {
-  initCollapsibles();
-  uncollapseActiveFolder();
-});
-
-
-
-
-document.addEventListener("DOMContentLoaded", function() {
-  initCollapsibles();
-  uncollapseActiveFolder();
-});
-
-
-
