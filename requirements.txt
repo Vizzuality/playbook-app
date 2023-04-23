@@ -1,8 +1,9 @@
-Flask
+flask
+google
 flask-googlemaps
 google-auth
 google-auth-oauthlib
 google-auth-httplib2
 google-api-python-client
-MarkdownIt
+markdown-it-py
 mdit-py-plugins
