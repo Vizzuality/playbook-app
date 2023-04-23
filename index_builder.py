@@ -16,46 +16,29 @@ def build_menus(local_repo_path):
                     os.path.join(root, file), local_repo_path)
                 rel_dir = os.path.dirname(rel_path)
 
-                menu_to_update = private_menu if file.startswith(
-                    "private") else public_menu
+                is_private = file.startswith("private")
+                menu_to_update = private_menu
                 current_level = menu_to_update
                 for folder in rel_dir.split(os.sep):
                     current_level = current_level.setdefault(folder, {})
 
                 current_level[file] = rel_path
 
+                if not is_private:
+                    menu_to_update = public_menu
+                    current_level = menu_to_update
+                    for folder in rel_dir.split(os.sep):
+                        current_level = current_level.setdefault(folder, {})
+
+                    current_level[file] = rel_path
+
     return public_menu, private_menu
+
 
 
 def save_menus_to_files(public_menu, private_menu, local_repo_path):
     public_index_file = os.path.join(local_repo_path, "public_index.md")
     private_index_file = os.path.join(local_repo_path, "private_index.md")
-
-    # def write_nested_list(file, menu, level=0):
-    #     indent = "    " * level
-    #     file.write(f'{indent}<ul class="collapsible" data-collapsible="expandable">\n')
-    #     for item, value in menu.items():
-    #         if isinstance(value, dict):
-    #             file.write(f'{indent}    <li>\n')
-    #             file.write(f'{indent}        <div class="collapsible-header"><i class="tiny material-icons">chevron_right</i>{humanize(item)}</div>\n') 
-    #             file.write(f'{indent}        <div class="collapsible-body">\n')
-    #             write_nested_list(file, value, level + 1)
-    #             file.write(f'{indent}        </div>\n')
-    #             file.write(f'{indent}    </li>\n')
-    #         else:
-    #             url = urllib.parse.quote(value)  # Quote the URL here
-    #             file.write(f'{indent}    <li>\n')
-    #             file.write(f'{indent}        <a href="/view-md/{url}" onclick="event.stopPropagation();" class="collapsible-header">{humanize(item[:-3])}</a>\n')
-    #             file.write(f'{indent}    </li>\n')
-    #     file.write(f'{indent}</ul>\n')
-
-    #     if level == 0:
-    #         file.write('<script>\n')
-    #         file.write('    document.addEventListener("DOMContentLoaded", function() {\n')
-    #         file.write('        var elems = document.querySelectorAll(".collapsible");\n')
-    #         file.write('        var instances = M.Collapsible.init(elems, {accordion: false});\n')
-    #         file.write('    });\n')
-    #         file.write('</script>\n')
 
     def write_nested_list(file, menu, level=0):
         indent = "    " * level
