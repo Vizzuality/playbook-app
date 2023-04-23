@@ -1,3 +1,4 @@
+.env
 logs/
 playbook/
 # Byte-compiled / optimized / DLL files
