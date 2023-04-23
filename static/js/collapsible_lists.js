@@ -6,10 +6,36 @@ document.addEventListener("collapsiblesInitialized", function () {
   uncollapseActiveFolder();
 });
 
+function updateChevron(element) {
+  var chevron = element.querySelector(".collapsible-header i");
+  if (chevron) {
+    if (element.classList.contains("active")) {
+      chevron.textContent = "expand_more";
+    } else {
+      chevron.textContent = "chevron_right";
+    }
+  }
+}
+
+function updateAllChevrons() {
+  var collapsibleHeaders = document.querySelectorAll(".collapsible li");
+  collapsibleHeaders.forEach(function (element) {
+    updateChevron(element);
+  });
+}
+
 function initCollapsibles() {
   console.log("Initializing collapsibles");
   var elems = document.querySelectorAll(".collapsible");
   var instances = M.Collapsible.init(elems, { accordion: false });
+
+  // Add event listeners to update the chevron when collapsible is opened or closed
+  var headers = document.querySelectorAll(".collapsible .collapsible-header");
+  headers.forEach(function (header) {
+    header.addEventListener("click", function (event) {
+      setTimeout(updateAllChevrons, 100);
+    });
+  });
 
   // Dispatch a custom event when collapsibles are initialized
   var event = new Event("collapsiblesInitialized");
@@ -36,36 +62,10 @@ function openParentCollapsibles(element) {
   openParentCollapsibles(parentLi.closest(".collapsible"));
 }
 
-
-
-
-// function uncollapseActiveFolder() {
-//   var urlParams = new URLSearchParams(window.location.search);
-//   var activeFolderName = urlParams.get("folder");
-//   if (!activeFolderName) {
-//     return;
-//   }
-
-//   console.log("activeFolderName:", activeFolderName);
-
-//   var links = Array.from(document.querySelectorAll(".collapsible a, .collapsible div.collapsible-header"));
-
-//   var activeLink = links.find(function (element) {
-//     return element.textContent.includes(activeFolderName);
-//   });
-
-//   if (activeLink) {
-//     var parentLi = activeLink.closest("li");
-//     parentLi.classList.add("active");
-//     openParentCollapsibles(parentLi);
-//   }
-// }
-
-// uncollapseActiveFolder();
-
 function uncollapseActiveFolder() {
   var urlParams = new URLSearchParams(window.location.search);
   var activeFolderName = urlParams.get("folder");
+  updateAllChevrons();
   if (!activeFolderName) {
     return;
   }
