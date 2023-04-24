@@ -54,7 +54,8 @@ def save_menus_to_files(public_menu, private_menu, local_repo_path):
             else:
                 url = urllib.parse.quote(value[:-3])  # Remove .md extension here and quote the URL
                 file.write(f'{indent}    <li>\n')
-                file.write(f'{indent}        <a href="/view-md/{url}" data-folder="{humanize(item[:-3])}" onclick="event.stopPropagation();" class="collapsible-header">{humanize(item[:-3])}</a>\n')
+                file.write(f'{indent}        <div class="collapsible-header"><a href="/view-md/{url}" data-folder="{humanize(item[:-3])}" onclick="event.stopPropagation();">{humanize(item[:-3])}</a></div>\n')
+                file.write(f'{indent}        <div class="collapsible-body"></div>\n')
                 file.write(f'{indent}    </li>\n')
         file.write(f'{indent}</ul>\n')
 
@@ -66,6 +67,7 @@ def save_menus_to_files(public_menu, private_menu, local_repo_path):
             file.write('        uncollapseActiveFolder();')
             file.write('    });\n')
             file.write('</script>\n')
+
 
 
     with open(public_index_file, "w") as public_file:
