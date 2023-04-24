@@ -1,6 +1,10 @@
 # Vizzuality Playbook App
 
-This is a Python 3 Flask application that serves a playbook consisting of Markdown files stored in a GitHub repository. The app converts the Markdown files to HTML and displays them using a web interface. The app also implements Google Single Sign-On (SSO) for authentication and requires users to log in with their Google accounts.
+This is a Python 3 Flask application that serves the Vizzuality Playbook pages by pulling the original markdown files stored in a local folder; the playbook folder is updated automatically from the Github Vizzuality Playbook repository.
+
+The app converts the Markdown files to HTML and displays them using a web interface. The app also implements Google Single Sign-On (SSO) for authentication and requires users to log in with their Google accounts.
+
+When a user is not loged in, the app will show puplic pages only.
 
 ## Dependencies
 
