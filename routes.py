@@ -10,7 +10,6 @@ from flask import session
 import os
 markdowner = MarkdownIt().use(tasklists_plugin)
 routes = Blueprint('routes', __name__)
-
 @routes.route('/images/<path:subpath>')
 def serve_image(subpath):
     return send_from_directory(local_repo_path, subpath)
