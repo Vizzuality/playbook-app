@@ -16,7 +16,7 @@ def login():
             'token_uri': 'https://oauth2.googleapis.com/token',
             'redirect_uris': [url_for('auth.oauth2callback', _external=True)]
         }},
-        ['email', 'openid']
+        ['https://www.googleapis.com/auth/userinfo.email', 'openid']
     )
 
     flow.redirect_uri = url_for('auth.oauth2callback', _external=True)
@@ -37,7 +37,7 @@ def oauth2callback():
             'token_uri': 'https://oauth2.googleapis.com/token',
             'redirect_uris': [url_for('auth.oauth2callback', _external=True)]
         }},
-        scopes=['openid', 'email'],
+        scopes=['https://www.googleapis.com/auth/userinfo.email', 'openid'],
         state=state
     )
 
