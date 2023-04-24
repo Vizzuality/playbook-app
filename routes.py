@@ -6,8 +6,8 @@ from markdown_it import MarkdownIt
 from mdit_py_plugins.tasklists import tasklists_plugin
 from breadcrumbs import breadcrumbs
 from flask import session
-
 import os
+
 markdowner = MarkdownIt().use(tasklists_plugin)
 routes = Blueprint('routes', __name__)
 @routes.route('/images/<path:subpath>')
@@ -20,11 +20,6 @@ def view_folder(folder):
     full_path = os.path.join(local_repo_path, folder)
     if not os.path.isdir(full_path):
         return "Folder not found", 404
-
-    # ... logic to fetch the list of files and folders contained in the current folder ...
-
-    breadcrumbs_list = breadcrumbs(os.path.join(folder, "dummy.md"))
-    return render_template('folder_page.html', items=items, breadcrumbs=breadcrumbs_list)
 
 @routes.route('/view-md/<path:md_path>')
 def view_md(md_path):
@@ -55,21 +50,6 @@ def index():
 
     html_content = markdowner.render(md_content)
     return render_template(template_name, content=html_content, active_folder=folder)
-
-# @routes.route('/public-page')
-# def public_page():
-#     md_content = fetch_markdown_content(os.path.join(local_repo_path, 'public_index.md'))
-#     html_content = markdowner.render(md_content)
-#     return render_template('public_index.html', content=html_content)
-
-# @routes.route('/private-page')
-# def private_page():
-#     if 'email' not in session:
-#         flash('You need to be logged in to access this page.', 'error')
-#         return redirect(url_for('login'))
-#     md_content = fetch_markdown_content(os.path.join(local_repo_path, 'private_index.md'))
-#     html_content = markdowner.render(md_content)
-#     return render_template('private_index.html', content=html_content)
 
 @routes.route('/update-repo', methods=['post'])
 def update_repo():
