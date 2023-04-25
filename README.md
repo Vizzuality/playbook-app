@@ -52,6 +52,28 @@ Run the application:
 export FLASK_APP=app.py
 flask run
 ```
+## Tailwind CSS and SCSS Setup
+
+This project uses Tailwind CSS and SCSS for styling. Follow these steps to set up and build the CSS:
+
+1. Install Node.js and Yarn (or npm) if you haven't already.
+
+2. Install the required dependencies:
+```
+   yarn install
+```
+3. Build the CSS:
+```
+   yarn build
+```
+
+To watch for changes in your SCSS files and automatically build the CSS, run the following command:
+```
+   yarn watch
+```
+## Contributing
+
+We welcome contributions to this project. If you find any issues, have any suggestions, or want to contribute code, please feel free to open an issue or create a pull request on GitHub.
 
 ## License
 This project is licensed under the MIT License. See the [License](LICENSE.md) file for details.

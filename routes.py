@@ -42,13 +42,14 @@ def serve_repo_files(path):
 def index():
     folder = request.args.get('folder', None)
     if 'email' not in session:
-        md_content = fetch_markdown_content(os.path.join(local_repo_path, 'public_index.md'))
+        with open(os.path.join(local_repo_path, 'public_index.md'), 'r') as file:
+            html_content = file.read()
         template_name = 'public_index.html'
     else:
-        md_content = fetch_markdown_content(os.path.join(local_repo_path, 'private_index.md'))
+        with open(os.path.join(local_repo_path, 'private_index.md'), 'r') as file:
+            html_content = file.read()
         template_name = 'private_index.html'
 
-    html_content = markdowner.render(md_content)
     return render_template(template_name, content=html_content, active_folder=folder)
 
 @routes.route('/update-repo', methods=['post'])

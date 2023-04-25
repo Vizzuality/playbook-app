@@ -2,6 +2,12 @@
 .env
 logs/
 playbook
+# Node.js
+node_modules/
+*.log
+# CSS build output
+/static/styles.css
+/static/styles.css.map
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
