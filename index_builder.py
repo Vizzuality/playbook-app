@@ -40,7 +40,7 @@ def save_menus_to_files(public_menu, private_menu, local_repo_path):
     public_index_file = os.path.join(local_repo_path, "public_index.md")
     private_index_file = os.path.join(local_repo_path, "private_index.md")
 
-    def write_nested_list(file, menu, level=0, is_sub_menu=False):
+    def write_nested_list(file, menu, level=0, is_sub_menu=False, padding_level=0):
         indent = "    " * level
 
         if is_sub_menu:
@@ -49,23 +49,25 @@ def save_menus_to_files(public_menu, private_menu, local_repo_path):
             file.write(f'{indent}<ul role="list" class="flex flex-1 flex-col gap-y-7">\n')
 
         for item, value in menu.items():
+            padding_value = f"{padding_level}rem" if padding_level > 0 else "0"
             if isinstance(value, dict):
-                file.write(f'{indent}    <li>\n')
+                file.write(f'{indent}    <li style="padding-left: {padding_value};">\n')
                 file.write(f'{indent}        <button type="button" class="hover:bg-gray-50 flex items-center w-full text-left rounded-md p-2 gap-x-3 text-sm leading-6 font-semibold text-gray-700" aria-controls="sub-menu-{item.replace(" ", "-")}" aria-expanded="false">\n')
                 file.write(f'{indent}            <svg class="transform transition-transform text-gray-400 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">\n')
                 file.write(f'{indent}                <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />\n')
                 file.write(f'{indent}            </svg>\n')
                 file.write(f'{indent}            {humanize(item)}\n')
                 file.write(f'{indent}        </button>\n')
-                file.write(f'{indent}        <div id="sub-menu-{item.replace(" ", "-")}">\n')  # Add the id attribute here
-                write_nested_list(file, value, level + 1, is_sub_menu=True)
+                file.write(f'{indent}        <div id="sub-menu-{item.replace(" ", "-")}"class="sub-menu">\n')  # Add the id attribute here
+                write_nested_list(file, value, level + 1, is_sub_menu=True, padding_level=padding_level + 1)
                 file.write(f'{indent}        </div>\n')
                 file.write(f'{indent}    </li>\n')
             else:
                 url = urllib.parse.quote(value[:-3])  # Remove .md extension here and quote the URL
-                file.write(f'{indent}    <li>\n')
+                file.write(f'{indent}    <li style="padding-left: {padding_value};">\n')
                 file.write(f'{indent}        <a href="/view-md/{url}" class="hover:bg-gray-50 block rounded-md py-2 pr-2 pl-9 text-sm leading-6 text-gray-700">{humanize(item[:-3])}</a>\n')
                 file.write(f'{indent}    </li>\n')
+
 
         file.write(f'{indent}</ul>\n')
 
