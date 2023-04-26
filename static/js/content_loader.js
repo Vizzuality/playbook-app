@@ -1,17 +1,17 @@
 $(document).ready(function () {
-    initCollapsibles();
-  
-    // Load the default content or the content specified in the URL
-    let contentUrl = "default_content"; // Replace with the actual default content URL
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has("url")) {
-      contentUrl = urlParams.get("url");
-    }
-    loadContent(contentUrl);
+  $("#menu-links").on("click", "a", function (e) {
+    e.preventDefault(); // Prevent default navigation behavior
+
+    // Load the content of the clicked link into the playbook-container div
+    $("#playbook-container").load($(this).attr("href"));
   });
-  
-  function loadContent(url) {
-    $.get(`/view-md/${url}`, function (data) {
-      $("#content").html(data);
-    });
-  }
+  $("#login").on("click", function () {
+    const url = $(this).data("url");
+    window.location.href = url;
+  });
+
+  $("#logout").on("click", function () {
+    const url = $(this).data("url");
+    window.location.href = url;
+  });
+});

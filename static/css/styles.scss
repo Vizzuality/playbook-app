@@ -4,3 +4,36 @@
 .collapsed-menu {
     display: none;
   }
+
+
+h1 {
+  @apply text-4xl text-vizzuality mb-4;
+}
+
+h2 {
+  @apply text-3xl text-vizzuality mb-3;
+}
+
+h3 {
+  @apply text-2xl text-vizzuality mb-2;
+}
+
+p {
+  @apply text-base text-black leading-5 mb-4;
+}
+
+a {
+  @apply text-blue-500 hover:text-blue-700;
+}
+
+ul {
+  @apply list-disc pl-5 mb-4;
+}
+
+li {
+  @apply mb-2;
+}
+
+hr {
+  @apply my-6;
+}

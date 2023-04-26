@@ -3,11 +3,13 @@ module.exports = {
       "./templates/**/*.html",
       "./static/src/**/*.js"
     ],
-    darkMode: 'media',
     theme: {
       extend: {
         fontFamily: {
           sans: ['Inter var']
+        },
+        textColor: {
+          'vizzuality': '#2ba4a0',
         },
       },
     },
