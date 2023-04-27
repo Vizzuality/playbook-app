@@ -1,22 +1,22 @@
 $(document).ready(function () {
-  $("#menu-links").on("click", "a", function (e) {
+  $("#menu-links, .search-results").on("click", "a", function (e) {
     e.preventDefault();
-    $("#playbook-container").load($(this).attr("href"));
+    var url = $(this).attr("href");
+    $("#playbook-container").load(url, function () {
+      window.history.pushState({ path: url }, "", url);
+    });
   });
-  $("#login").on("click", function () {
+  
+  $("#login, #logout").on("click", function () {
     const url = $(this).data("url");
     window.location.href = url;
   });
 
-  $("#logout").on("click", function () {
-    const url = $(this).data("url");
-    window.location.href = url;
-  });
   $('#search-field').on('keydown', function (event) {
     if (event.key === 'Enter') {
       event.preventDefault();
       const searchQuery = $(this).val();
-      
+
       $.ajax({
         url: '/search',
         data: { query: searchQuery },
@@ -26,6 +26,13 @@ $(document).ready(function () {
       });
     }
   });
+
+  // Handle browser's back button
+  window.onpopstate = function (event) {
+    if (event.state && event.state.path) {
+      $("#playbook-container").load(event.state.path);
+    }
+  };
   $("#playbook-container").on("click", "a.search-result-link", function (e) {
     e.preventDefault();
     $("#playbook-container").load($(this).attr("href"));

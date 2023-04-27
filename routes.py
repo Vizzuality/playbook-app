@@ -51,7 +51,9 @@ def view_md(md_path):
     md_content = fetch_markdown_content(full_path)
     html_content = markdowner.render(md_content)
     breadcrumbs_list = breadcrumbs(md_path)
-    return render_template('public_page.html', content=html_content, breadcrumbs=breadcrumbs_list, active_folder=md_path)
+    return render_template('md_page.html', content=html_content, breadcrumbs=breadcrumbs_list, active_folder=md_path)
+
+
 
 @routes.route('/repo/<path:path>')
 def serve_repo_files(path):
