@@ -5,7 +5,6 @@ from config import local_repo_path
 from search import search_md_files
 from markdown_it import MarkdownIt
 from mdit_py_plugins.tasklists import tasklists_plugin
-from breadcrumbs import breadcrumbs
 from flask import session
 import os
 
@@ -50,8 +49,7 @@ def view_md(md_path):
         return "File not found", 404
     md_content = fetch_markdown_content(full_path)
     html_content = markdowner.render(md_content)
-    breadcrumbs_list = breadcrumbs(md_path)
-    return render_template('md_page.html', content=html_content, breadcrumbs=breadcrumbs_list, active_folder=md_path)
+    return render_template('md_page.html', content=html_content, active_folder=md_path)
 
 
 
