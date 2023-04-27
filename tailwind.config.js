@@ -11,6 +11,9 @@ module.exports = {
         textColor: {
           'vizzuality': '#2ba4a0',
         },
+        backgroundColor: {
+          'vizzuality': '#2ba4a0',
+        },
       },
     },
     variants: {

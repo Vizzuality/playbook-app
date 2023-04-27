@@ -5,17 +5,19 @@
     display: none;
   }
 
-
+.vizzuality-logo-desktop {
+  padding-left: 35px;
+}
 h1 {
-  @apply text-4xl text-vizzuality mb-4;
+  @apply text-4xl font-medium mb-4;
 }
 
 h2 {
-  @apply text-3xl text-vizzuality mb-3;
+  @apply text-3xl font-medium mb-3;
 }
 
 h3 {
-  @apply text-2xl text-vizzuality mb-2;
+  @apply text-2xl font-medium mb-2;
 }
 
 p {

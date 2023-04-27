@@ -2,6 +2,7 @@ from flask import render_template, redirect, url_for, session, flash, request, j
 from repo import pull_changes
 from index_builder import fetch_markdown_content
 from config import local_repo_path
+from search import search_md_files
 from markdown_it import MarkdownIt
 from mdit_py_plugins.tasklists import tasklists_plugin
 from breadcrumbs import breadcrumbs
@@ -10,6 +11,24 @@ import os
 
 markdowner = MarkdownIt().use(tasklists_plugin)
 routes = Blueprint('routes', __name__)
+
+@routes.route('/search')
+def search():
+    query = request.args.get('query', '')
+    if not query:
+        return "No query provided", 400
+
+    logged_in = 'email' in session
+    matching_files = search_md_files(query, local_repo_path, logged_in)
+    matching_links_and_excerpts = [
+        {
+            'link': url_for('routes.view_md', md_path=os.path.splitext(file['path'])[0]),
+            'excerpt': markdowner.render(file['excerpt']),
+            'file_name': os.path.splitext(os.path.basename(file['path']))[0]
+        } for file in matching_files
+    ]
+    return render_template('search_results.html', results=matching_links_and_excerpts)
+
 @routes.route('/images/<path:subpath>')
 def serve_image(subpath):
     return send_from_directory(local_repo_path, subpath)
