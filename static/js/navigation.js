@@ -1,4 +1,21 @@
 $(document).ready(function () {
+  var mdPath = window.location.pathname;
+    if (mdPath.startsWith('/view-md/')) {
+        $.ajax({
+            url: mdPath,
+            type: 'GET',
+            success: function(data) {
+                if (data.status === "redirect") {
+                    window.location.href = data.url;
+                } else {
+                    $('#playbook-container').html(data);
+                }
+            },
+            error: function() {
+                console.log('Error loading content');
+            }
+        });
+    }
   $("#menu-links, .search-results").on("click", "a", function (e) {
     e.preventDefault();
     var url = $(this).attr("href");
@@ -6,7 +23,7 @@ $(document).ready(function () {
       window.history.pushState({ path: url }, "", url);
     });
   });
-  
+
   $("#login, #logout").on("click", function () {
     const url = $(this).data("url");
     window.location.href = url;
@@ -38,3 +55,15 @@ $(document).ready(function () {
     $("#playbook-container").load($(this).attr("href"));
   });
 });
+function loadContent(url) {
+  $.ajax({
+      url: url,
+      type: 'GET',
+      success: function(response) {
+          $('#playbook-container').html(response);
+      },
+      error: function() {
+          console.error('Error loading content');
+      }
+  });
+}

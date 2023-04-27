@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, session, flash, request, jsonify, send_from_directory, Blueprint
+from flask import render_template, url_for, session, request, jsonify, send_from_directory, Blueprint
 from repo import pull_changes
 from index_builder import fetch_markdown_content
 from config import local_repo_path
@@ -41,8 +41,10 @@ def view_folder(folder):
 
 @routes.route('/view-md/<path:md_path>')
 def view_md(md_path):
+    if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
+        return render_template('base.html')
     if "private" in md_path.split("/")[-1] and 'email' not in session:
-        return redirect(url_for('auth.login'))
+        return jsonify(status="redirect", url=url_for('auth.login'))
 
     full_path = os.path.join(local_repo_path, md_path + '.md')
     if not os.path.isfile(full_path) or not full_path.endswith('.md'):
@@ -50,8 +52,6 @@ def view_md(md_path):
     md_content = fetch_markdown_content(full_path)
     html_content = markdowner.render(md_content)
     return render_template('md_page.html', content=html_content, active_folder=md_path)
-
-
 
 @routes.route('/repo/<path:path>')
 def serve_repo_files(path):
