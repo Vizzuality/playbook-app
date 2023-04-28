@@ -17,21 +17,22 @@ def build_menus(local_repo_path):
                 rel_dir = os.path.dirname(rel_path)
 
                 is_private = file.startswith("private")
-
+                # Check if file is not public_index.md or private_index.md
+                if file not in ("public_index.md", "private_index.md"):
                 # Update private menu
-                current_level = private_menu
-                for folder in rel_dir.split(os.sep):
-                    current_level = current_level.setdefault(folder, {})
-
-                current_level[file] = rel_path
-
-                # Update public menu if not private
-                if not is_private:
-                    current_level = public_menu
+                    current_level = private_menu
                     for folder in rel_dir.split(os.sep):
                         current_level = current_level.setdefault(folder, {})
 
                     current_level[file] = rel_path
+
+                    # Update public menu if not private
+                    if not is_private:
+                        current_level = public_menu
+                        for folder in rel_dir.split(os.sep):
+                            current_level = current_level.setdefault(folder, {})
+
+                        current_level[file] = rel_path
 
     return public_menu, private_menu
 
