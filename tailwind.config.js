@@ -1,12 +1,12 @@
 module.exports = {
     content: [
       "./templates/**/*.html",
-      "./static/src/**/*.js"
+      "./static/**/*.js"
     ],
     theme: {
       extend: {
         fontFamily: {
-          sans: ['Inter var']
+          sans: ['inter', 'sans-serif']
         },
         textColor: {
           'vizzuality': '#2ba4a0',
@@ -21,6 +21,7 @@ module.exports = {
     },
     plugins: [
       require('@tailwindcss/forms'),
+      require('@tailwindcss/typography')
     ]
   }
   
