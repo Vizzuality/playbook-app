@@ -10,6 +10,7 @@ from config import webhook_secret
 import os
 import logging
 import hmac
+import hashlib
 
 markdowner = MarkdownIt().use(tasklists_plugin)
 routes = Blueprint('routes', __name__)
@@ -114,8 +115,9 @@ def gh_update():
     event_type = request.headers.get('X-GitHub-Event')
     if event_type == 'push':
         branch = request.json.get('ref', '').split('/')[-1]
-        if branch == 'master':
+        if branch == 'new_playbook':
             pull_changes(local_repo_path)
             return jsonify({'status': 'success', 'message': 'Repository updated'}), 200
         else:
             return jsonify({'status': 'skipped', 'message': 'No update needed'}), 200
+    return jsonify({'status': 'not_processed', 'message': f'Unexpected event type: {event_type}'}), 200

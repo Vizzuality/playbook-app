@@ -30,7 +30,7 @@ def pull_changes(local_repo_path):
     create_log_directory(log_dir)
     
     run_command(f"{git_ssh_command} git fetch origin", local_repo_path, log_dir)
-    run_command(f"{git_ssh_command} git reset --hard origin/master", local_repo_path, log_dir)  # Replace 'main' with your default branch
+    run_command(f"{git_ssh_command} git reset --hard origin/new_playbook", local_repo_path, log_dir)  # Replace 'main' with your default branch
     run_command(f"{git_ssh_command} git clean -fd", local_repo_path, log_dir)
     run_command(f"{git_ssh_command} git status", local_repo_path, log_dir)
     run_command(f"{git_ssh_command} git remote show origin", local_repo_path, log_dir)
