@@ -68,7 +68,7 @@ def save_menus_to_files(public_menu, private_menu, local_repo_path):
             else:
                 url = urllib.parse.quote(value[:-3])  # Remove .md extension here and quote the URL
                 file.write(f'{indent}    <li style="padding-left: {padding_value};">\n')
-                file.write(f'{indent}        <a href="/view-md/{url}" class="{hover_color} {text_color} hover:bg-gray-900 block rounded-md py-2 pr-2 pl-9 text-sm leading-6">{humanize(item[:-3])}</a>\n')
+                file.write(f'{indent}        <a href="/view-md/{url}" class="{hover_color} {text_color} hover:bg-gray-900 block rounded-md py-1 pr-1 text-sm leading-6">{humanize(item[:-3])}</a>\n')
                 file.write(f'{indent}    </li>\n')
 
         file.write(f'{indent}</ul>\n')
