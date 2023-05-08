@@ -8,3 +8,7 @@ google-api-python-client
 markdown-it-py
 mdit-py-plugins
 python-dotenv
+logging
+sh
+GitPython
+flask_httpauth

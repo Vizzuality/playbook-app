@@ -6,7 +6,10 @@ from search import search_md_files
 from markdown_it import MarkdownIt
 from mdit_py_plugins.tasklists import tasklists_plugin
 from flask import session
+from config import webhook_secret
 import os
+import logging
+import hmac
 
 markdowner = MarkdownIt().use(tasklists_plugin)
 routes = Blueprint('routes', __name__)
@@ -76,12 +79,43 @@ def update_repo():
     payload = request.get_json()
     print(payload)
 
-    # Verify the webhook payload (optional but recommended)
-    # You can use the 'X-Hub-Signature-256' header and a secret to verify the payload
-    # Check the GitHub documentation for more information
-
-    if payload.get('ref') == 'refs/heads/master':  # Replace 'main' with your default branch
+    if payload.get('ref') == 'refs/heads/new_playbook':
         pull_changes(local_repo_path)
         return jsonify({'status': 'success', 'message': 'Repository updated'}), 200
     else:
         return jsonify({'status': 'skipped', 'message': 'No update needed'}), 200
+
+@routes.route('/gh-update', methods=['post'])
+def gh_update():
+    # Verify the signature of the request
+    signature = request.headers.get('X-Hub-Signature')
+    if signature is None:
+        logging.info("Invalid signature")
+        return 'Invalid signature', 400
+
+    signature_parts = signature.split('=', 1)
+    if len(signature_parts) != 2:
+        logging.info("Invalid signature")
+        return 'Invalid signature', 400
+
+    signature_type, signature_value = signature_parts
+    if signature_type != 'sha1':
+        logging.info("Unsupported signature type")
+        return 'Unsupported signature type', 400
+
+    secret = webhook_secret
+    mac = hmac.new(secret.encode('utf-8'), request.data, hashlib.sha1)
+    expected_signature = f'sha1={mac.hexdigest()}'
+    if not hmac.compare_digest(signature, expected_signature):
+        logging.info("Invalid signature")
+        return 'Invalid signature', 400
+
+    # The signature is valid, handle the webhook request
+    event_type = request.headers.get('X-GitHub-Event')
+    if event_type == 'push':
+        branch = request.json.get('ref', '').split('/')[-1]
+        if branch == 'master':
+            pull_changes(local_repo_path)
+            return jsonify({'status': 'success', 'message': 'Repository updated'}), 200
+        else:
+            return jsonify({'status': 'skipped', 'message': 'No update needed'}), 200

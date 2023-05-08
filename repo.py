@@ -25,7 +25,7 @@ def run_command(cmd, cwd, log_dir):
 
 def pull_changes(local_repo_path):
     git_ssh_command = 'GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"'
-    log_dir = 'logs'  # Change this to the desired path for your log directory
+    log_dir = 'logs'
     
     create_log_directory(log_dir)
     
