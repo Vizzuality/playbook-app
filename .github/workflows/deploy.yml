@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+    - name: Print public key fingerprint
+      run: |
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keygen -lf ~/.ssh/id_rsa.pub
     - name: install ssh keys
       run: |
         install -m 600 -D /dev/null ~/.ssh/id_rsa
