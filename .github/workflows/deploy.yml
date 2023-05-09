@@ -18,11 +18,11 @@ jobs:
         SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         SERVER: ${{ secrets.SERVER }}
         USERNAME: ${{ secrets.USERNAME }}
-        NEW_PRIVATE_KEY: ${{ secrets.NPRIVATE_KEY }}
+        NEW_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       run: |
         mkdir -p ~/.ssh
         ssh-keyscan -t rsa,ecdsa,ed25519 $SERVER >> ~/.ssh/known_hosts
-        echo "$NPRIVATE_KEY" > ~/.ssh/github_keys.pem
+        echo "$PRIVATE_KEY" > ~/.ssh/github_keys.pem
         chmod 600 ~/.ssh/github_keys.pem
         ssh-agent -a $SSH_AUTH_SOCK > /dev/null
         ssh-add ~/.ssh/github_keys.pem
