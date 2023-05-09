@@ -23,5 +23,5 @@ jobs:
         chmod 600 private_key.pem
         echo "$SERVER $(ssh-keyscan -t rsa $SERVER)" >> ~/.ssh/known_hosts
         scp -i private_key.pem -r . $USERNAME@$SERVER:/home/ubuntu/playbook-app
-        ssh -i private_key.pem $USERNAME@$SERVER "cd /home/ubuntu/playbook-app && git fetch origin main && git reset --hard origin/main && git clean -f -d -x --exclude=.env --exclude=playbook && git pull origin main --force && pip install -r requirements.txt && yarn install && yarn build && sudo systemctl restart geo-gpt.service"
+        ssh -i private_key.pem $USERNAME@$SERVER "cd /home/ubuntu/playbook-app && git fetch origin main && git reset --hard origin/main && git clean -f -d -x --exclude=.env --exclude=playbook && git pull origin main --force && pip install -r requirements.txt && yarn install && yarn build && sudo systemctl restart playbook_app.service"
         rm -f private_key.pem
