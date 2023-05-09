@@ -1,4 +1,4 @@
-name: Deploy Playbook app
+name: Deploy
 
 on:
   push:
@@ -41,5 +41,5 @@ jobs:
         echo "$PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
         scp -i private_key.pem -r . $USERNAME@$SERVER:/home/ubuntu/playbook-app
-        ssh -i private_key.pem $USERNAME@$SERVER "sudo systemctl restart playbook_app.service"
+        ssh -i private_key.pem $USERNAME@$SERVER "cd /home/ubuntu/playbook-app && git fetch origin main && git reset --hard origin/main && git clean -f -d -x --exclude=.env --exclude=playbook && git pull origin main --force && pip install -r requirements.txt && yarn install && yarn build && sudo systemctl restart geo-gpt.service"
         rm -f private_key.pem
