@@ -1,37 +1,23 @@
-name: Deploy
-
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  deploy:
-    runs-on: ubuntu-22.04
+  run_pull:
+    name: run pull
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Setup SSH Keys and known_hosts
-      env:
-        SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-        SERVER: ${{ secrets.SERVER }}
-        USERNAME: ${{ secrets.USERNAME }}
-        NEW_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+    - name: install ssh keys
+      # check this thread to understand why its needed:
+      # https://stackoverflow.com/a/70447517
       run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan -t rsa,ecdsa,ed25519 $SERVER >> ~/.ssh/known_hosts
-        echo "$PRIVATE_KEY" > ~/.ssh/github_keys.pem
-        chmod 600 ~/.ssh/github_keys.pem
-        ssh-agent -a $SSH_AUTH_SOCK > /dev/null
-        ssh-add ~/.ssh/github_keys.pem
-
-    - name: Deploy to server
-      env:
-        SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-        SERVER: ${{ secrets.SERVER }}
-        USERNAME: ${{ secrets.USERNAME }}
-      run: |
-        scp -o StrictHostKeyChecking=no -o HostKeyAlgorithms=rsa-sha2-512,rsa-sha2-256,ecdsa-sha2-nistp256,ssh-ed25519 -r . $USERNAME@$SERVER:/home/ubuntu/playbook-app
-        ssh -o StrictHostKeyChecking=no -o HostKeyAlgorithms=rsa-sha2-512,rsa-sha2-256,ecdsa-sha2-nistp256,ssh-ed25519 $USERNAME@$SERVER "cd /home/ubuntu/playbook-app && git fetch origin main && git reset --hard origin/main && git clean -f -d -x --exclude=.env --exclude=playbook && git pull origin main --force && pip install -r requirements.txt && yarn install && yarn build && sudo systemctl restart playbook_app.service"
+        install -m 600 -D /dev/null ~/.ssh/id_rsa
+        echo "${{ secrets.PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.SERVER }} > ~/.ssh/known_hosts
+    - name: connect, pull, build, and restart
+      run: ssh ${{ secrets.USERNAME }}@${{ secrets.SERVER }} "cd /home/ubuntu/playbook-app && git fetch origin main && git reset --hard origin/main && git clean -f -d -x --exclude=.env --exclude=playbook && git pull origin main --force && pip install -r requirements.txt && yarn install && yarn build && sudo systemctl restart playbook_app.service && exit"
+    - name: cleanup
+      run: rm -rf ~/.ssh
