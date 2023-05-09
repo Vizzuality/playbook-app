@@ -7,24 +7,6 @@
     display: none;
   }
 
-.vizzuality-logo-desktop {
-  padding-left: 0px;
-}
-h1 {
-  @apply text-4xl font-medium mb-4;
-}
-
-h2 {
-  @apply text-3xl font-medium mb-3;
-}
-
-h3 {
-  @apply text-2xl font-medium mb-2;
-}
-
-p {
-  @apply text-base text-black leading-5 mb-4;
-}
 
 a {
   @apply text-blue-500 hover:text-blue-700;
