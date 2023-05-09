@@ -12,11 +12,13 @@ jobs:
     steps:
     - name: Print public key fingerprint
       run: |
+        mkdir -p ~/.ssh
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa.pub
         chmod 644 ~/.ssh/id_rsa.pub
         ssh-keygen -lf ~/.ssh/id_rsa.pub
+
 
     
     - name: install ssh keys
