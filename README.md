@@ -77,3 +77,5 @@ We welcome contributions to this project. If you find any issues, have any sugge
 
 ## License
 This project is licensed under the MIT License. See the [License](LICENSE.md) file for details.
+
+[![Deploy](https://github.com/Vizzuality/playbook-app/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/Vizzuality/playbook-app/actions/workflows/deploy.yml)
