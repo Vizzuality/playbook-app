@@ -32,6 +32,6 @@ jobs:
         # Debug: List loaded keys in the agent
         ssh-add -l
     - name: connect, pull, build, and restart
-      run: ssh -v ${{ secrets.USERNAME }}@${{ secrets.SERVER }} "export PATH=\"\$PATH:/home/ubuntu/.nvm/versions/node/v18.16.0/bin\" & "cd /home/ubuntu/playbook-app && git fetch origin main && git reset --hard origin/main && git clean -f -d -x --exclude=.env --exclude=playbook && git pull origin main --force && pip install -r requirements.txt && yarn install && yarn build && sudo systemctl restart playbook_app.service && exit"
+      run: ssh -v ${{ secrets.USERNAME }}@${{ secrets.SERVER }} "export PATH=\"\$PATH:/home/ubuntu/.nvm/versions/node/v18.16.0/bin\" && cd /home/ubuntu/playbook-app && git fetch origin main && git reset --hard origin/main && git clean -f -d -x --exclude=.env --exclude=playbook && git pull origin main --force && pip install -r requirements.txt && yarn install && yarn build && sudo systemctl restart playbook_app.service && exit"
     - name: cleanup
       run: rm -rf ~/.ssh
