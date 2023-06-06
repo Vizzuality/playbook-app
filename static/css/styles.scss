@@ -1,14 +1,11 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-@import 'tailwindcss/typography';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 @import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
 .collapsed-menu {
-    display: none;
-  }
-
+  display: none;
+}
 
 a {
   @apply text-blue-500 hover:text-blue-700;
 }
-
