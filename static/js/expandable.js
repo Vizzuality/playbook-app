@@ -1,4 +1,28 @@
 $(document).ready(function () {
+  var mdPath = window.location.pathname;
+  if (mdPath.startsWith("/view-md/")) {
+    $.ajax({
+      url: mdPath,
+      type: "GET",
+      success: function (data) {
+        if (data.status === "redirect") {
+          window.location.href = data.url;
+        } else {
+          $("#playbook-container").html(data);
+        }
+      },
+      error: function () {
+        console.log("Error loading content");
+      },
+    });
+  }
+  $("#menu-links, .search-results").on("click", "a", function (e) {
+    e.preventDefault();
+    var url = $(this).attr("href");
+    $("#playbook-container").load(url, function () {
+      window.history.pushState({ path: url }, "", url);
+    });
+  });
   // Attach click event to buttons with aria-controls attribute
   $("[aria-controls]").on("click", function () {
     const button = $(this);

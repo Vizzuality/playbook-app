@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='js/scroller.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/expandable.js') }}"></script>
     <script src="{{ url_for('static', filename='js/navigation.js') }}"></script>
   </head>
   <body class="h-full">
@@ -33,9 +32,7 @@
               />
             </a>
           </div>
-          <nav id="menu-links" class="flex flex-1 flex-col">
-            {% block content %} {% endblock %}
-          </nav>
+          <div id="sidebarContainer"></div>
         </div>
       </div>
 
