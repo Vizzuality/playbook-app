@@ -21,6 +21,7 @@ $(document).ready(function () {
     var url = $(this).attr("href");
     $("#playbook-container").load(url, function () {
       window.history.pushState({ path: url }, "", url);
+      $(window).scrollTop(0);
     });
   });
   // Attach click event to buttons with aria-controls attribute

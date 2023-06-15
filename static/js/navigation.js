@@ -14,6 +14,7 @@ $(document).ready(function () {
         data: { query: searchQuery },
         success: function (data) {
           $("#playbook-container").html(data);
+          $(window).scrollTop(0);
         },
       });
     }
@@ -31,11 +32,13 @@ $(document).ready(function () {
   window.onpopstate = function (event) {
     if (event.state && event.state.path) {
       $("#playbook-container").load(event.state.path);
+      $(window).scrollTop(0);
     }
   };
   $("#playbook-container").on("click", "a.search-result-link", function (e) {
     e.preventDefault();
     $("#playbook-container").load($(this).attr("href"));
+    $(window).scrollTop(0);
   });
 });
 function loadContent(url) {
@@ -44,6 +47,7 @@ function loadContent(url) {
     type: "GET",
     success: function (response) {
       $("#playbook-container").html(response);
+      $(window).scrollTop(0);
     },
     error: function () {
       console.error("Error loading content");
