@@ -24,6 +24,12 @@ markdowner = MarkdownIt().use(tasklists_plugin)
 routes = Blueprint("routes", __name__)
 
 
+@routes.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(routes.root_path, 'static', 'images'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+
 @routes.route("/sidebar")
 def sidebar():
     if "email" not in session:

@@ -1,3 +1,4 @@
+name: Deploy
 on:
   push:
     branches:
@@ -6,34 +7,40 @@ on:
 
 jobs:
   run_pull:
-    name: run pull
+    name: Deploy to the production server
     runs-on: ubuntu-22.04
 
     steps:
-    - name: Print public key fingerprint
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa.pub
-        chmod 644 ~/.ssh/id_rsa.pub
-        ssh-keygen -lf ~/.ssh/id_rsa.pub
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/server.key
+          chmod 600 ~/.ssh/server.key
+          cat >>~/.ssh/config <<END
+          Host production
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/server.key
+            StrictHostKeyChecking no
+          END
+          cat ~/.ssh/config
+          ls -la ~/.ssh
+        env:
+          SSH_USER: ${{ secrets.USERNAME }}
+          SSH_KEY: ${{ secrets.PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SERVER }}
 
+      - name: Pull new code onto the server
+        run: ssh production "cd /home/ubuntu/playbook-app && git fetch origin main && git reset --hard origin/main && git clean -f -d -x --exclude=.env --exclude=playbook && git pull origin main --force"
 
-    
-    - name: install ssh keys
-      run: |
-        echo "${{ secrets.PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        install -m 600 -D /dev/null ~/.ssh/id_rsa
-        echo "${{ secrets.PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.SERVER }} > ~/.ssh/known_hosts
-        eval "$(ssh-agent -s)"
-        ssh-add ~/.ssh/id_rsa
-        # Debug: List loaded keys in the agent
-        ssh-add -l
-    - name: connect, pull, build, and restart
-      run: ssh -v ${{ secrets.USERNAME }}@${{ secrets.SERVER }} "export PATH=\"/home/ubuntu/.nvm/versions/node/v18.16.0/bin:/home/ubuntu/.nvm/versions/node/v18.16.0/bin/yarn:\$PATH\" && cd /home/ubuntu/playbook-app && git fetch origin main && git reset --hard origin/main && git clean -f -d -x --exclude=.env --exclude=playbook && git pull origin main --force && pip install -r requirements.txt && yarn install && yarn build && sudo systemctl restart playbook_app.service && exit"
+      - name: Update libraries
+        run: ssh production "cd /home/ubuntu/playbook-app && pip install -r requirements.txt && yarn install"
 
+      - name: Rebuild assets
+        run: ssh production "cd /home/ubuntu/playbook-app && yarn build"
 
-    - name: cleanup
-      run: rm -rf ~/.ssh
+      - name: Restart services
+        run: ssh production "cd /home/ubuntu/playbook-app && sudo systemctl restart playbook_app.service"
+
+      - name: Cleanup
+        run: rm -rf ~/.ssh
