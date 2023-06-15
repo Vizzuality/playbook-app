@@ -100,10 +100,6 @@ def serve_repo_files(path):
 @routes.route("/")
 def index():
     folder = request.args.get("folder", None)
-
-    # Depending on your base.html, you might not need to pass these variables
-    # You also might need to pass other variables, depending on your template
-
     return render_template("base.html", active_folder=folder)
 
 
@@ -121,7 +117,6 @@ def update_repo():
 
 @routes.route("/gh-update", methods=["post"])
 def gh_update():
-    # Verify the signature of the request
     signature = request.headers.get("X-Hub-Signature")
     if signature is None:
         logging.info("Invalid signature")
@@ -144,7 +139,6 @@ def gh_update():
         logging.info("Invalid signature")
         return "Invalid signature", 400
 
-    # The signature is valid, handle the webhook request
     event_type = request.headers.get("X-GitHub-Event")
     if event_type == "push":
         branch = request.json.get("ref", "").split("/")[-1]

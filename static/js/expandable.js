@@ -19,11 +19,34 @@ $(document).ready(function () {
   $("#menu-links, .search-results").on("click", "a", function (e) {
     e.preventDefault();
     var url = $(this).attr("href");
+    var title = $(this).text();
+
     $("#playbook-container").load(url, function () {
       window.history.pushState({ path: url }, "", url);
+
+      var newTitle, newUrl;
+
+      if (title) {
+        newTitle = "Vizzuality Playbook - " + title;
+        document.title = newTitle;
+      } else {
+        newTitle = "Vizzuality Playbook";
+        document.title = newTitle;
+      }
+
+      newUrl = window.location.href;
+
+      $('meta[name="title"]').attr("content", newTitle);
+      $('meta[property="og:title"]').attr("content", newTitle);
+      $('meta[property="twitter:title"]').attr("content", newTitle);
+
+      $('meta[property="og:url"]').attr("content", newUrl);
+      $('meta[property="twitter:url"]').attr("content", newUrl);
+
       $(window).scrollTop(0);
     });
   });
+
   // Attach click event to buttons with aria-controls attribute
   $("[aria-controls]").on("click", function () {
     const button = $(this);
