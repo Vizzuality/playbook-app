@@ -8,18 +8,11 @@ When a user is not loged in, the app will show puplic pages only.
 
 ## Dependencies
 
-The app requires the following external libraries:
+- Python 3.11 + pip
+- Node v18.16 + yarn v1
 
-- flask
-- google
-- flask-googlemaps
-- google-auth
-- google-auth-oauthlib
-- google-auth-httplib2
-- google-api-python-client
-- markdown-it-py
-- mdit-py-plugins
-- python-dotenv
+The Python dependent libraries can be found on `requirements.txt`
+The Node dependent libraries can be found on `package.json`
 
 ## Installation
 
@@ -40,6 +33,7 @@ pip install -r requirements.txt
 ```
 
 Configure the app by creating a .env file in the root directory with the following:
+
 ```bash
 CLIENT_ID=<your_google_client_id>
 CLIENT_SECRET=<your_google_client_secret>
@@ -56,7 +50,7 @@ flask run
 
 This project uses Tailwind CSS and SCSS for styling. Follow these steps to set up and build the CSS:
 
-1. Install Node.js and Yarn (or npm) if you haven't already.
+1. Install Node.js and Yarn
 
 2. Install the required dependencies:
 ```
