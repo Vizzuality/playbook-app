@@ -1,1 +1,9 @@
 {% block content %} {{ content | safe }} {% endblock %}
+
+<script type="text/javascript">
+  window.onload = function () {
+    if (!document.getElementById("playbook-container")) {
+      location.reload();
+    }
+  };
+</script>
