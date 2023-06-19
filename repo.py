@@ -36,7 +36,7 @@ def pull_changes(local_repo_path, branch):
     create_log_directory(log_dir)
 
     run_command(f"git checkout {branch}", local_repo_path,
-                log_dir) 
+                log_dir)
     run_command(f"git pull", local_repo_path, log_dir)
 
     IndexBuilder().reload_data()
