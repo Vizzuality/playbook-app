@@ -4,6 +4,7 @@ from markdown_it import MarkdownIt
 
 mdit = MarkdownIt()
 
+
 def search_md_files(search_text, base_path, logged_in=False):
     matching_files = []
 
@@ -31,6 +32,5 @@ def search_md_files(search_text, base_path, logged_in=False):
                         'path': os.path.relpath(file_path, base_path),
                         'excerpt': html_excerpt
                     })
-
 
     return matching_files
