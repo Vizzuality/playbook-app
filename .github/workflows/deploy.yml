@@ -31,7 +31,7 @@ jobs:
           SSH_HOST: ${{ secrets.SERVER }}
 
       - name: Pull new code onto the server
-        run: ssh production "cd /home/ubuntu/playbook-app && git fetch origin main && git reset --hard origin/main && git clean -f -d -x --exclude=.env --exclude=playbook && git pull origin main --force"
+        run: ssh production "cd /home/ubuntu/playbook-app && git fetch origin main && git reset --hard origin/main && git clean -f -d -x --exclude=.env && git pull origin main --force"
 
       - name: Update libraries
         run: ssh production "cd /home/ubuntu/playbook-app && pip install -r requirements.txt && yarn install"
