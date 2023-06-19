@@ -35,11 +35,8 @@ def pull_changes(local_repo_path, branch):
 
     create_log_directory(log_dir)
 
-    run_command(f"git fetch origin", local_repo_path, log_dir)
-    run_command(f"git reset --hard origin/{branch}", local_repo_path,
-                log_dir)  # Replace 'main' with your default branch
-    run_command(f"git clean -fd", local_repo_path, log_dir)
-    run_command(f"git status", local_repo_path, log_dir)
-    run_command(f"git remote show origin", local_repo_path, log_dir)
+    run_command(f"git checkout {branch}", local_repo_path,
+                log_dir) 
+    run_command(f"git pull", local_repo_path, log_dir)
 
     IndexBuilder().reload_data()
